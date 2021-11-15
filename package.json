@@ -1,0 +1,41 @@
+{
+  "name": "e18-api",
+  "version": "1.0.0",
+  "description": "VTFK sitt kø-system systemoppgaver",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vtfk/E18-api.git"
+  },
+  "keywords": [
+    "queue"
+  ],
+  "author": "Karl-Einar Bergstrøm",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vtfk/E18-api/issues"
+  },
+  "homepage": "https://github.com/vtfk/E18-api#readme",
+  "devDependencies": {
+    "audit": "^0.0.6",
+    "cross-env": "^7.0.3",
+    "jest": "^27.3.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.15",
+    "standardx": "^7.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-openapi-validator": "^4.13.2",
+    "mongoose": "^6.0.12",
+    "passport": "^0.5.0",
+    "passport-headerapikey": "^1.2.2",
+    "swagger-ui-express": "^4.1.6",
+    "yamljs": "^0.3.0"
+  }
+}

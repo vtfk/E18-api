@@ -1,0 +1,865 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: E18 API
+  description: Spec for VTFK E18 API
+  contact: 
+    email: utvikling@vtfk.no
+tags:
+  - name: Jobs
+    description: A collection of tasks
+  - name: Tasks
+    description: Tasks inside jobs to be executed by robots
+  - name: Statistics
+    description: Retreive statistics from E18
+  - name: APIKeys
+    description: Requests for handeling API Keys
+servers:
+  - description: 'Development endpoint'
+    url: 'http://localhost:{port}/api/v1'
+    variables:
+      port:
+        enum: ['8080', '8081', '8082', '8083', '8084', '8085', '8086', '8087', '8088', '8089', '8090']
+        default: '8080'
+  - description: Hosted endpoint
+    url: '{protocol}://localhost/api/v1/'
+    variables:
+      protocol:
+        enum: ['http', 'https']
+        default: 'http'
+paths:
+  /jobs:
+    get:
+      operationId: getJobs
+      summary: Gets all or a selection of jobs
+      description: Gets all or a selection of jobs
+      tags:
+        - Jobs
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/select"
+        - $ref: "#/components/parameters/filter"
+        - $ref: "#/components/parameters/search"
+        - $ref: "#/components/parameters/orderby"
+        - $ref: "#/components/parameters/top"
+        - $ref: "#/components/parameters/skip"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    post:
+      operationId: postJob
+      summary: Creates a new job
+      description: Creates a new job in the job queue
+      tags:
+        - Jobs
+      security:
+        - APIKey: []
+        - Bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /jobs/{id}:
+    get:
+      operationId: getJob
+      summary: Gets a specific job
+      description: Gets a specific job by id
+      tags:
+        - Jobs
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    put:
+      operationId: putJob
+      summary: Updates a job
+      description: Updates a job in the job queue
+      tags:
+        - Jobs
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    delete:
+      operationId: deleteJob
+      summary: Deletes a job
+      description: Deletes a job from the jobqueue
+      tags:
+        - Jobs
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Ok
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /tasks:
+    get:
+      operationId: getTasks
+      summary: Gets all or a selection of tasks
+      description: Gets all or a selection of tasks
+      tags:
+        - Tasks
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/select"
+        - $ref: "#/components/parameters/filter"
+        - $ref: "#/components/parameters/search"
+        - $ref: "#/components/parameters/orderby"
+        - $ref: "#/components/parameters/top"
+        - $ref: "#/components/parameters/skip"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /tasks/{id}/operation:
+    post:
+      operationId: postTaskOperation
+      summary: Report back the result of an attempted task execution
+      tags:
+        - Tasks
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/TaskOperationSuccess'
+                - $ref: '#/components/schemas/TaskOperationError'
+              discriminator:
+                propertyName: type
+                mapping:
+                  success: '#/components/schemas/TaskOperationSuccess'
+                  failure: '#/components/schemas/TaskOperationError'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /tasks/{id}/checkout:
+    put:
+      operationId: checkoutTask
+      summary: Checksout a task
+      description: Checks out the task so it cannot by checked out by others
+      tags:
+        - Tasks
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /tasks/{id}/complete:
+    put:
+      summary: Marks a task as completed
+      operationId: completeTask
+      tags:
+        - Tasks
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /tasks/{id}:
+    delete:
+      summary: Deletes a task
+      tags:
+        - Tasks
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /statistics:
+    get:
+      operationId: getStatistics
+      summary: Gets statistics,
+      tags:
+        - Statistics
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/select"
+        - $ref: "#/components/parameters/filter"
+        - $ref: "#/components/parameters/search"
+        - $ref: "#/components/parameters/orderby"
+        - $ref: "#/components/parameters/top"
+        - $ref: "#/components/parameters/skip"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatisticsEntry'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    post:
+      operationId: postStatistics
+      summary: Post a new entry to the statistics
+      description: This is done automatically by E18, but jobs outside of E18 can report here
+      tags:
+        - Statistics
+      security:
+        - APIKey: []
+        - Bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatisticsEntry'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatisticsEntry'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /apikeys:
+    get:
+      operationId: getAPIKeys
+      summary: Gets all or a selection of API Keys
+      description: Gets all or a selection of API Keys
+      tags:
+        - APIKeys
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/select"
+        - $ref: "#/components/parameters/filter"
+        - $ref: "#/components/parameters/search"
+        - $ref: "#/components/parameters/orderby"
+        - $ref: "#/components/parameters/top"
+        - $ref: "#/components/parameters/skip"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/APIKey'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    post:
+      operationId: postAPIKey
+      summary: Creates a new APIKey
+      tags:
+        - Jobs
+      security:
+        - APIKey: []
+        - Bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/APIKey'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /apikeys/{id}:
+    get:
+      operationId: getAPIKey
+      summary: Gets a specific APIKey
+      description: Gets a specific APIKey by id
+      tags:
+        - APIKeys
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKey'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    put:
+      operationId: putAPIKey
+      summary: Updates an APIKey
+      tags:
+        - APIKeys
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/APIKey'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    delete:
+      operationId: deleteAPIKey
+      summary: Deletes an APIKey
+      tags:
+        - APIKeys
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Ok
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    Job:
+      description: Represents a single job
+      type: object
+      required:
+        - system
+        - tasks
+        - projectId
+      properties:
+        _id:
+          $ref: '#/components/schemas/MongoDBId'
+        system:
+          type: string
+          description: The system this job originates from
+          example: IDM
+        projectId:
+          type: number
+          description: The project id this job relates to
+          minimum: 0
+        status:
+          $ref: '#/components/schemas/JobStatuses'
+        tasks:
+          type: array
+          items:
+            required:
+              - data
+            allOf:
+              - $ref: '#/components/schemas/Task'
+        createdTimestamp:
+          $ref: '#/components/schemas/DateTime'
+        createdBy:
+          $ref: '#/components/schemas/Requestor'
+        modifiedTimestamp:
+          $ref: '#/components/schemas/DateTime'
+        modifiedBy:
+          $ref: '#/components/schemas/Requestor'
+    JobStatuses:
+      type: string
+      enum:
+        - waiting
+        - running
+        - suspended
+        - completed
+        - failed
+    Task:
+      type: object
+      description: Represents a job task
+      required:
+        - type
+      properties:
+        _id:
+          $ref: '#/components/schemas/MongoDBId'
+        jobId:
+          description: The id of the job the task belongs to
+          allOf:
+            - $ref: '#/components/schemas/MongoDBId'
+        type:
+          $ref: '#/components/schemas/TaskTypes'
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        retries:
+          type: number
+          description: The number of retries of this task
+          default: 0
+        data:
+          type: object
+        operations:
+          type: array
+          items:
+            type: object
+            properties:
+              _id: 
+                $ref: '#/components/schemas/MongoDBId'
+              status:
+                type: string
+                enum:
+                  - completed
+                  - failed
+    APIKey:
+      description: Represents an E18 APIKey
+      type: object
+      required:
+        - name
+      properties:
+        _id:
+          $ref: '#/components/schemas/MongoDBId'
+        name:
+          type: string
+          description: The name of the APIKey
+          example: IDM registrator
+        enabled:
+          type: boolean
+          description: Determines if the APIKey is enabled for use
+          default: true
+        createdTimestamp:
+          $ref: '#/components/schemas/DateTime'
+        modifiedTimestamp:
+          $ref: '#/components/schemas/DateTime'
+    TaskTypes:
+      description: All allowed task types
+      type: string
+      enum: [archive, svarut]
+    TaskStatus:
+      type: string
+      enum:
+        - waiting
+        - running
+        - completed
+        - failed
+        - retried
+    TaskOperationStatuses:
+      type: string
+      enum: [success, failure]
+    TaskOperationSuccess:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+            $ref: '#/components/schemas/TaskOperationStatuses'
+        message:
+          type: string
+        data:
+          type: object
+    TaskOperationError:
+      type: object
+      required:
+        - type
+        - message
+        - error
+      properties:
+        type:
+          $ref: '#/components/schemas/TaskOperationStatuses'
+        message:
+          type: string
+        error:
+          type: object
+    StatisticsEntry:
+      type: object
+      required:
+        - system
+        - projectId
+        - status
+        - startTimestamp
+        - endTimestamp
+      properties:
+        _id:
+          $ref: '#/components/schemas/MongoDBId'
+        jobId:
+          description: The id of the job this statistics entry if for
+          allOf:
+            - $ref: '#/components/schemas/MongoDBId'
+        system:
+          type: string
+        projectId:
+          type: number
+        status:
+          $ref: '#/components/schemas/JobStatuses'
+        startTimestamp:
+          $ref: '#/components/schemas/DateTime'
+        endTimestamp:
+          $ref: '#/components/schemas/DateTime'
+        createdBy:
+          $ref: '#/components/schemas/Requestor'
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+    DateTime:
+      description: String in ISO 8601 format
+      example: '2020-01-01T12:00:00Z'
+      type: string
+      format: date-time
+    MongoDBId:
+      type: string
+      minLength: 24
+      maxLength: 24
+      example: 5f208a75f8a0ed560c5ab303
+    Requestor:
+      type: object
+      description: This can either be a user or a APIKey
+      properties:
+        _id:
+          $ref: '#/components/schemas/MongoDBId'
+        type:
+          type: string
+          enum:
+            - user
+            - apikey
+        name:
+          type: string
+        requestor:
+          oneOf:
+            - $ref: '#/components/schemas/APIKey'
+    Error:
+      type: object
+      description: The general error format
+      properties:
+        title:
+          type: string
+          description: Navnet på feilen hvis noen finnes
+        message:
+          type: string
+          description: En melding som beskriver feilen
+        stack:
+          type: string
+          description: Stack informasjon om hvor i koden problemet oppsto
+        status:
+          type: number
+          description: HTTP status-kode for feilen  
+        errors:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: object
+    ValidationError:
+      type: object
+      description: The error that will be thrown if the request does not comply with this schema
+      properties:
+        title:
+          type: string
+          description: Navnet på feilen hvis noen finnes
+        message:
+          type: string
+          description: En melding som beskriver feilen
+        stack:
+          type: string
+          description: Stack informasjon om hvor i koden problemet oppsto
+        status:
+          type: number
+          description: HTTP status-kode for feilen
+        path:
+          type: string
+          description: Endepunktet problemet oppsto i
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+                description: Hvor i input-JSON objektet problemet ble oppdaget i
+              message:
+                type: string
+                description: En beskrivelse av problemet
+              errorCode:
+                type: string
+                description: Kode for feilen hvis det finnes
+  parameters:
+    id:
+      in: path
+      name: id
+      required: true
+      schema:
+        $ref: '#/components/schemas/MongoDBId'
+    select:
+      in: query
+      name: $select
+      description: Comma sepparated list of specific properties to get
+      example: 'column1, column2, column3'
+      allowReserved: true
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+          minLength: 1
+          maxLength: 100
+    filter:
+      in: query
+      name: $filter
+      description: OData filter expression
+      example: "status -eq 'running'"
+      allowReserved: true
+      schema:
+        type: string
+        maxLength: 250
+    orderby:
+      in: query
+      name: $orderby
+      description: One or more properties to sort by
+      example: column1, column2
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+          minLength: 1
+          maxLength: 100
+    skip:
+      in: query
+      name: $skip
+      description: OData skip expression for pagination
+      schema:
+        type: integer
+        minimum: 0
+    top:
+      in: query
+      name: $top
+      description: OData expression for the number of items you want returned
+      schema:
+        type: integer
+        minimum: 0
+    search:
+      in: query
+      name: $search
+      description: A search term for data. (The search must be a full match)
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+  responses:
+    400:
+      description: 400 Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+    401:
+      description: Unauthorized
+    404:
+      description: Not found
+    500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    APIKey:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+    Bearer:
+      type: http
+      scheme: bearer
