@@ -1,7 +1,7 @@
 /*
   Import dependencies
 */
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 /*
   Sub schema
@@ -18,12 +18,12 @@ const operation = new mongoose.Schema({
 */
 const schema = new mongoose.Schema({
   jobId: { type: String },
-  type: { type: String, enum:['svarut', 'p360archive', 'p360updateperson'] },
+  type: { type: String, enum: ['svarut', 'p360archive', 'p360updateperson'] },
   status: { type: String, enum: ['waiting', 'running', 'completed', 'failed'], default: 'waiting' },
   retries: { type: Number, default: 0 },
   data: { type: Object },
   responseData: { type: Object },
-  operations: { type: [ operation] }
+  operations: { type: [operation] }
 })
 
-module.exports = schema;
+module.exports = schema

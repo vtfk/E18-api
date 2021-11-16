@@ -1,38 +1,38 @@
 /*
   Import dependencies
 */
-const http = require('http');                                         // For hosting the web server
-const fs = require('fs');                                             // For working with the file system
-const path = require('path');                                         // For combining paths
-const yamljs = require('yamljs');                                     // For converting YAML to JSON
-const express = require('express');                                   // Main system for running the API
-const morgan = require('morgan');                                     // For outputing information about the requests
-const cors = require('cors');                                         // For handeling CORS
-const swaggerUi = require('swagger-ui-express');                      // For hosting and displaying the APIs documentation
-const OpenApiValidator = require('express-openapi-validator');        // Validates all routes based on the requested resource
-const { determineDocumentationLinks } = require('./lib/oas');         // Function for determining if there are any documentation links to provide in case of an error
-require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })    // Load different .env files based on NODE_ENV
-const config = require('./config');                                   // Loads the config
-const db = require('./database/db');
+const http = require('http') // For hosting the web server
+const fs = require('fs') // For working with the file system
+const path = require('path') // For combining paths
+const yamljs = require('yamljs') // For converting YAML to JSON
+const express = require('express') // Main system for running the API
+const morgan = require('morgan') // For outputing information about the requests
+const cors = require('cors') // For handeling CORS
+const swaggerUi = require('swagger-ui-express') // For hosting and displaying the APIs documentation
+const OpenApiValidator = require('express-openapi-validator') // Validates all routes based on the requested resource
+const { determineDocumentationLinks } = require('./lib/oas') // Function for determining if there are any documentation links to provide in case of an error
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` }) // Load different .env files based on NODE_ENV
+const config = require('./config') // Loads the config
+const db = require('./database/db')
 
 /*
   Determine variables
 */
-const host = config.hostname;                                         // Get the hosting address
-const port = config.port;                                             // Get the hosting port
+const host = config.hostname // Get the hosting address
+const port = config.port // Get the hosting port
 
 /*
   Setup express instance
 */
-const app = express();                                                // Creates the express instance  
-app.use(express.json());                                              // Automatically parse JSON body
-app.use(morgan('dev'));                                               // Output request information to stdout
+const app = express() // Creates the express instance
+app.use(express.json()) // Automatically parse JSON body
+app.use(morgan('dev')) // Output request information to stdout
 // Handle CORS
 const corsOptions = {
   origin: true,
   credentials: true
 }
-app.use(cors(corsOptions));
+app.use(cors(corsOptions))
 
 /*
   Documentation & Validation
@@ -49,19 +49,19 @@ const swaggerUIOptions = {
 }
 
 // Host the documentation and register the validators for each version of the API
-const oasDocumentationEndpoints = [];
-const routeChildren = fs.readdirSync(path.join(__dirname, 'routes'));
+const oasDocumentationEndpoints = []
+const routeChildren = fs.readdirSync(path.join(__dirname, 'routes'))
 if (routeChildren && Array.isArray(routeChildren)) {
   for (let i = 0; i < routeChildren.length; i++) {
-    const oasSpecPath = path.join(__dirname, 'routes', routeChildren[i], 'oas.yaml');
+    const oasSpecPath = path.join(__dirname, 'routes', routeChildren[i], 'oas.yaml')
     if (fs.existsSync(oasSpecPath)) {
       // Load the file as JSON and determine what the endpoint will be
       const oasJSON = yamljs.load(oasSpecPath)
-      const oasDocEndpoint = '/api/' + routeChildren[i] + '/docs';
-      oasDocumentationEndpoints.push(oasDocEndpoint);
+      const oasDocEndpoint = '/api/' + routeChildren[i] + '/docs'
+      oasDocumentationEndpoints.push(oasDocEndpoint)
 
       // Host the documentation
-      app.use(oasDocEndpoint, swaggerUi.serve, swaggerUi.setup(oasJSON, swaggerUIOptions));
+      app.use(oasDocEndpoint, swaggerUi.serve, swaggerUi.setup(oasJSON, swaggerUIOptions))
 
       // Register the API validator
       app.use(
@@ -78,25 +78,25 @@ if (routeChildren && Array.isArray(routeChildren)) {
   Validate that the database is connected
 */
 app.use('*', (req, res, next) => {
-  if(db.client.connection.readyState != 1) {
-      next({
-          status: 500,
-          message: 'Database is not connected'
-      })
+  if (db.client.connection.readyState !== 1) {
+    next({
+      status: 500,
+      message: 'Database is not connected'
+    })
   } else {
-      next();
+    next()
   }
 })
 
 /*
   Authentication
 */
-const passport = require('passport');                                 // Engine for authenticating using different strategies
-const headerAPIKeyStrategy = require('./auth/authentication/apikey'); // Passport strategy for authenticating with APIKey
+const passport = require('passport') // Engine for authenticating using different strategies
+const headerAPIKeyStrategy = require('./auth/authentication/apikey') // Passport strategy for authenticating with APIKey
 // Register strategies
-passport.use(headerAPIKeyStrategy);
+passport.use(headerAPIKeyStrategy)
 // Initialize passport
-app.use(passport.initialize());
+app.use(passport.initialize())
 // Use strategies
 app.all('*',
   passport.authenticate(['headerapikey'], { session: false }),
@@ -104,16 +104,16 @@ app.all('*',
     console.log('✅ Authentication ok')
     // Setup some custom properties that should be usable in the routes and middleware
     // req.custom = {};
-    next();
+    next()
   }
-);
+)
 
 /*
   Routes
 */
 // v1 routes
-app.use('/api/v1/jobs', require('./routes/v1/jobs'));
-app.use('/api/v1/readytasks', require('./routes/v1/readytasks'));
+app.use('/api/v1/jobs', require('./routes/v1/jobs'))
+app.use('/api/v1/readytasks', require('./routes/v1/readytasks'))
 // app.use('/api/v1/store', require('./routes/v1/store'));
 
 /*
@@ -121,11 +121,11 @@ app.use('/api/v1/readytasks', require('./routes/v1/readytasks'));
   All routes sets the req.response object so that it can be sent to the requestor by a common function
 */
 app.use('/*', (req, res, next) => {
-  let response;
+  let response
   if (req.query.metadata) {
-    let itemCount = 0;
+    let itemCount = 0
     if (res.body && Array.isArray(res.body)) {
-      itemCount = req.response.length;
+      itemCount = req.response.length
     }
     response = {
       __metadata: {
@@ -137,12 +137,12 @@ app.use('/*', (req, res, next) => {
       },
       data: res.body
     }
-    const documentation = determineDocumentationLinks(req);
-    if (documentation) { response.__metadata.documentation = documentation; }
+    const documentation = determineDocumentationLinks(req)
+    if (documentation) { response.__metadata.documentation = documentation }
   } else {
-    response = res.body;
+    response = res.body
   }
-  res.json(response);
+  res.json(response)
   // res.type('json').send(JSON.stringify(response, null, 2));
 })
 
@@ -150,47 +150,47 @@ app.use('/*', (req, res, next) => {
   Error handeling
 */
 app.use((err, req, res, next) => {
-  console.log('❌ Error occured ❌');
+  console.log('❌ Error occured ❌')
   // Construct an error object
   let error = {}
   // Setup the error object based on type
   if (typeof err === 'object') {
     // Get all enumurable and non-enumurable property from the error object
     Object.getOwnPropertyNames(err).forEach((key) => {
-      error[key] = err[key];
+      error[key] = err[key]
     })
   } else if (typeof err === 'string') {
-    error.message = err;
+    error.message = err
   } else {
-    error = err;
+    error = err
   }
   // Attempt to link to documentation
-  const documentation = determineDocumentationLinks(req, oasDocumentationEndpoints);
-  if (documentation) { error.documentation = documentation; }
+  const documentation = determineDocumentationLinks(req, oasDocumentationEndpoints)
+  if (documentation) { error.documentation = documentation }
 
   // Output the error
-  console.error(error);
+  console.error(error)
 
   // Send the error
-  res.status(err.status || 500).json(error);
-  next();
+  res.status(err.status || 500).json(error)
+  next()
 })
 
 /*
   Host the server
 */
-const server = http.createServer(app);
+const server = http.createServer(app)
 server.listen(port, host, () => {
-  let hostname = host;
+  let hostname = host
   if (host === '0.0.0.0') { hostname = 'localhost' }
 
   // Output the root adress the server is listening on
   console.log('Root endpoint:')
-  console.log('Your server is listening on port %d (http://%s:%d)', port, hostname, port);
+  console.log('Your server is listening on port %d (http://%s:%d)', port, hostname, port)
 
   // Output API endpoint documentation URLs
   console.log('\nDocumentation endpoints:')
   oasDocumentationEndpoints.forEach((endpoint) => {
-    console.log('http://%s:%d' + endpoint, hostname, port);
+    console.log('http://%s:%d' + endpoint, hostname, port)
   })
 })

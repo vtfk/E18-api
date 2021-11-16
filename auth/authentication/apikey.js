@@ -1,20 +1,20 @@
 /*
     Import dependencies
 */
-const HeaderAPIKeyStrategy = require('passport-headerapikey').HeaderAPIKeyStrategy;
+const HeaderAPIKeyStrategy = require('passport-headerapikey').HeaderAPIKeyStrategy
 
-function getEnvironmentAPIKeys () {
-  const APIKeys = [];
-  let currentKey = 'initial';
-  let counter = 1;
-  while (currentKey !== undefined) {
-    currentKey = process.env['APIKEY' + counter];
-    if (currentKey) { APIKeys.push(currentKey); } else { break; }
-    counter++;
-    if (counter === 1000) { break; }  // Protect against infinity loop
-  }
-  return APIKeys;
-}
+// function getEnvironmentAPIKeys () {
+//   const APIKeys = []
+//   let currentKey = 'initial'
+//   let counter = 1
+//   while (currentKey !== undefined) {
+//     currentKey = process.env['APIKEY' + counter]
+//     if (currentKey) { APIKeys.push(currentKey) } else { break }
+//     counter++
+//     if (counter === 1000) { break } // Protect against infinity loop
+//   }
+//   return APIKeys
+// }
 
 module.exports = new HeaderAPIKeyStrategy(
   {
@@ -22,7 +22,7 @@ module.exports = new HeaderAPIKeyStrategy(
   },
   false,
   async (apikey, done) => {
-    return done(null, 'test');
+    return done(null, 'test')
     // let isKeyFound = false;
     // // Input valdidation
     // if (!apikey) {
