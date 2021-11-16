@@ -161,98 +161,93 @@ exports.createPaginationForResponse = (req, skip, top, items, totalItems) => {
  * @returns
  */
 exports.requestDataByQuery = async (req, Model, FieldsToRemove = [], FieldsToPopulate = []) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      /// ////////////////////////////////////////////////////////////////
-      // Parse the URL query
-      /// ////////////////////////////////////////////////////////////////
-      const query = this.getMongooseTermsFromQuery(req.query)
+  try {
+  /// ////////////////////////////////////////////////////////////////
+  // Parse the URL query
+  /// ////////////////////////////////////////////////////////////////
+    const query = this.getMongooseTermsFromQuery(req.query)
 
-      /// ////////////////////////////////////////////////////////////////
-      // Make filter case-insensitive
-      /// ////////////////////////////////////////////////////////////////
-      function makeFilterCaseInsensitive (part) {
-        for (const obj in part) {
-          if (typeof part[obj] === 'object') {
-            makeFilterCaseInsensitive(part[obj])
-          } else if (typeof part[obj] === 'string') {
-            if (!obj.startsWith('$')) {
-              part[obj] = { $regex: '^' + part[obj], $options: 'i' }
-            }
+    /// ////////////////////////////////////////////////////////////////
+    // Make filter case-insensitive
+    /// ////////////////////////////////////////////////////////////////
+    function makeFilterCaseInsensitive (part) {
+      for (const obj in part) {
+        if (typeof part[obj] === 'object') {
+          makeFilterCaseInsensitive(part[obj])
+        } else if (typeof part[obj] === 'string') {
+          if (!obj.startsWith('$')) {
+            part[obj] = { $regex: '^' + part[obj], $options: 'i' }
           }
         }
       }
-      await makeFilterCaseInsensitive(query.filter)
-
-      /// ////////////////////////////////////////////////////////////////
-      // Get the total number of incidents
-      /// ////////////////////////////////////////////////////////////////
-      let totalItems = 0
-      totalItems = await Model.countDocuments(query.filter)
-
-      /// ////////////////////////////////////////////////////////////////
-      // Selects
-      /// ////////////////////////////////////////////////////////////////
-      // Add all selected properties that should not be ommited from the result
-      let select = ''
-      let selectArray = []
-
-      // Add any selection fields that are not present in the removalarray to the selection array
-      if (query.select && FieldsToRemove) selectArray = query.select.filter((i) => !FieldsToRemove.includes(i))
-
-      // Add the fields to remove as exclusions if no selects are choosen. (MongoDB does not support both inclusion and exclusion in the same request)
-      if (!query.select && FieldsToRemove) FieldsToRemove.forEach((item) => selectArray.push('-' + item.trim()))
-
-      // Make the select-string and trim the ends
-      select = selectArray.join(' ').trim()
-
-      /// ////////////////////////////////////////////////////////////////
-      // Population
-      /// ////////////////////////////////////////////////////////////////
-      const populate = ''
-      if (FieldsToPopulate) FieldsToPopulate.filter((i) => selectArray.includes(i)).join(' ').trim()
-
-      /// ////////////////////////////////////////////////////////////////
-      // Get the data
-      /// ////////////////////////////////////////////////////////////////
-      await Model
-        .find(query.filter)
-        .select(select)
-        .limit(query.pagination.$top)
-        .skip((query.pagination.$skip - 1) * query.pagination.$top)
-        .sort(query.$orderby)
-        .populate(populate)
-        .exec((err, data) => {
-          try {
-            // Handle any errors
-            if (err) { return reject(err) }
-            // Convert data to JSON to enable editing before sending the reponse
-            data = JSON.parse(JSON.stringify(data))
-            // Remove any keys if applicable
-            if (FieldsToRemove) this.removeKeys(data, FieldsToRemove)
-            // Determine pagination for the result
-            const pagination = this.createPaginationForResponse(req, query.pagination.$skip, query.pagination.$top, data.length || 0, totalItems)
-            // Setup metadata object
-            const _metadata = {
-              pagination
-            }
-            if (req.query.$select) _metadata.$select = req.query.$select.join(',').trim()
-            if (req.query.$filter) _metadata.$filter = req.query.$filter
-            if (req.query.$search) _metadata.$search = req.query.$search
-            if (req.query.$orderby) _metadata.$filter = query.sanitized_orderby
-            _metadata.timestamp = new Date()
-            // Setup and return response
-            const response = {
-              _metadata,
-              data
-            }
-            return resolve(response)
-          } catch (err) {
-            return reject(err)
-          }
-        })
-    } catch (err) {
-      return reject(err)
     }
-  })
+    await makeFilterCaseInsensitive(query.filter)
+
+    /// ////////////////////////////////////////////////////////////////
+    // Get the total number of incidents
+    /// ////////////////////////////////////////////////////////////////
+    let totalItems = 0
+    totalItems = await Model.countDocuments(query.filter)
+
+    /// ////////////////////////////////////////////////////////////////
+    // Selects
+    /// ////////////////////////////////////////////////////////////////
+    // Add all selected properties that should not be ommited from the result
+    let select = ''
+    let selectArray = []
+
+    // Add any selection fields that are not present in the removalarray to the selection array
+    if (query.select && FieldsToRemove) selectArray = query.select.filter((i) => !FieldsToRemove.includes(i))
+
+    // Add the fields to remove as exclusions if no selects are choosen. (MongoDB does not support both inclusion and exclusion in the same request)
+    if (!query.select && FieldsToRemove) FieldsToRemove.forEach((item) => selectArray.push('-' + item.trim()))
+
+    // Make the select-string and trim the ends
+    select = selectArray.join(' ').trim()
+
+    /// ////////////////////////////////////////////////////////////////
+    // Population
+    /// ////////////////////////////////////////////////////////////////
+    const populate = ''
+    if (FieldsToPopulate) FieldsToPopulate.filter((i) => selectArray.includes(i)).join(' ').trim()
+
+    /// ////////////////////////////////////////////////////////////////
+    // Get the data
+    /// ////////////////////////////////////////////////////////////////
+    let data = await Model
+      .find(query.filter)
+      .select(select)
+      .limit(query.pagination.$top)
+      .skip((query.pagination.$skip - 1) * query.pagination.$top)
+      .sort(query.$orderby)
+      .populate(populate)
+      .exec()
+
+    // Convert data to JSON to enable editing before sending the reponse
+    data = JSON.parse(JSON.stringify(data))
+
+    // Remove any keys if applicable
+    if (FieldsToRemove) this.removeKeys(data, FieldsToRemove)
+
+    // Determine pagination for the result
+    const pagination = this.createPaginationForResponse(req, query.pagination.$skip, query.pagination.$top, data.length || 0, totalItems)
+
+    // Setup metadata object
+    const __metadata = {
+      pagination
+    }
+    if (req.query.$select) __metadata.$select = req.query.$select.join(',').trim()
+    if (req.query.$filter) __metadata.$filter = req.query.$filter
+    if (req.query.$search) __metadata.$search = req.query.$search
+    if (req.query.$orderby) __metadata.$filter = query.sanitized_orderby
+    __metadata.timestamp = new Date()
+    // Setup and return response
+    const response = {
+      __metadata,
+      data
+    }
+    return response
+  } catch (err) {
+    return Promise.reject(err)
+  }
 }
