@@ -8,6 +8,8 @@ info:
 tags:
   - name: Jobs
     description: A collection of tasks
+  - name: Ready tasks
+    description: Gets tasks that are ready to be run
   - name: Tasks
     description: Tasks inside jobs to be executed by robots
   - name: Statistics
@@ -171,6 +173,44 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
+  /readytasks:
+    get:
+      operationId: getReadyTasks
+      summary: Gets a list of tasks that are ready to be done
+      tags:
+        - Ready tasks
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - in: query
+          name: type
+          description: The type of tasks you want returned
+          schema:
+            type: string
+            example: svarut
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    allOf:
+                      $ref: '#/components/schemas/Task'
+                    collectedData:
+                      type: object
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
   /tasks:
     get:
       operationId: getTasks
@@ -205,10 +245,10 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
-  /tasks/{id}/operation:
-    post:
-      operationId: postTaskOperation
-      summary: Report back the result of an attempted task execution
+  /jobs/{id}/tasks:
+    get:
+      operationId: getJobTasks
+      summary: Gets all tasks for a job
       tags:
         - Tasks
       security:
@@ -216,25 +256,15 @@ paths:
         - Bearer: []
       parameters:
         - $ref: "#/components/parameters/id"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - $ref: '#/components/schemas/TaskOperationSuccess'
-                - $ref: '#/components/schemas/TaskOperationError'
-              discriminator:
-                propertyName: type
-                mapping:
-                  success: '#/components/schemas/TaskOperationSuccess'
-                  failure: '#/components/schemas/TaskOperationError'
       responses:
         200:
           description: Ok
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Task'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
         400:
           $ref: '#/components/responses/400'
         401:
@@ -243,7 +273,7 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
-  /tasks/{id}/checkout:
+  /jobs/{id}/tasks/{taskid}/checkout:
     put:
       operationId: checkoutTask
       summary: Checksout a task
@@ -255,6 +285,11 @@ paths:
         - Bearer: []
       parameters:
         - $ref: "#/components/parameters/id"
+        - in: path
+          name: taskid
+          required: true
+          schema:
+            $ref: '#/components/schemas/MongoDBId'
       responses:
         200:
           description: Ok
@@ -270,10 +305,10 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
-  /tasks/{id}/complete:
-    put:
-      summary: Marks a task as completed
-      operationId: completeTask
+  /jobs/{id}/tasks/{taskid}/operations:
+    post:
+      operationId: postTaskOperation
+      summary: Report back the result of an attempted task execution
       tags:
         - Tasks
       security:
@@ -281,6 +316,23 @@ paths:
         - Bearer: []
       parameters:
         - $ref: "#/components/parameters/id"
+        - in: path
+          name: taskid
+          required: true
+          schema:
+            $ref: '#/components/schemas/MongoDBId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/TaskOperationSuccess'
+                - $ref: '#/components/schemas/TaskOperationFailure'
+              discriminator:
+                propertyName: status
+                mapping:
+                  completed: '#/components/schemas/TaskOperationSuccess'
+                  failure: '#/components/schemas/TaskOperationFailure'
       responses:
         200:
           description: Ok
@@ -296,7 +348,7 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
-  /tasks/{id}:
+  /jobs/{id}/tasks/{taskid}:
     delete:
       summary: Deletes a task
       tags:
@@ -306,13 +358,14 @@ paths:
         - Bearer: []
       parameters:
         - $ref: "#/components/parameters/id"
+        - in: path
+          name: taskid
+          required: true
+          schema:
+            $ref: '#/components/schemas/MongoDBId'
       responses:
         200:
           description: Ok
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
         400:
           $ref: '#/components/responses/400'
         401:
@@ -421,7 +474,7 @@ paths:
       operationId: postAPIKey
       summary: Creates a new APIKey
       tags:
-        - Jobs
+        - APIKeys
       security:
         - APIKey: []
         - Bearer: []
@@ -547,6 +600,7 @@ components:
           $ref: '#/components/schemas/JobStatuses'
         tasks:
           type: array
+          minItems: 1
           items:
             required:
               - data
@@ -590,42 +644,22 @@ components:
           default: 0
         data:
           type: object
+          minProperties: 1
         operations:
           type: array
           items:
-            type: object
-            properties:
-              _id: 
-                $ref: '#/components/schemas/MongoDBId'
-              status:
-                type: string
-                enum:
-                  - completed
-                  - failed
-    APIKey:
-      description: Represents an E18 APIKey
-      type: object
-      required:
-        - name
-      properties:
-        _id:
-          $ref: '#/components/schemas/MongoDBId'
-        name:
-          type: string
-          description: The name of the APIKey
-          example: IDM registrator
-        enabled:
-          type: boolean
-          description: Determines if the APIKey is enabled for use
-          default: true
-        createdTimestamp:
-          $ref: '#/components/schemas/DateTime'
-        modifiedTimestamp:
-          $ref: '#/components/schemas/DateTime'
+            oneOf:
+              - $ref: '#/components/schemas/TaskOperationSuccess'
+              - $ref: '#/components/schemas/TaskOperationFailure'
+            discriminator:
+              propertyName: status
+              mapping:
+                completed: '#/components/schemas/TaskOperationSuccess'
+                failure: '#/components/schemas/TaskOperationFailure'
     TaskTypes:
       description: All allowed task types
       type: string
-      enum: [archive, svarut]
+      enum: [svarut, p360archive, p360updateperson]
     TaskStatus:
       type: string
       enum:
@@ -633,26 +667,25 @@ components:
         - running
         - completed
         - failed
-        - retried
     TaskOperationStatuses:
       type: string
-      enum: [success, failure]
+      enum: [completed, failure]
     TaskOperationSuccess:
       type: object
       required:
-        - type
+        - status
+        - data
       properties:
-        type:
+        status:
             $ref: '#/components/schemas/TaskOperationStatuses'
         message:
           type: string
         data:
           type: object
-    TaskOperationError:
+    TaskOperationFailure:
       type: object
       required:
-        - type
-        - message
+        - success
         - error
       properties:
         type:
@@ -690,8 +723,29 @@ components:
           $ref: '#/components/schemas/Requestor'
         tasks:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/Task'
+    APIKey:
+      description: Represents an E18 APIKey
+      type: object
+      required:
+        - name
+      properties:
+        _id:
+          $ref: '#/components/schemas/MongoDBId'
+        name:
+          type: string
+          description: The name of the APIKey
+          example: IDM registrator
+        enabled:
+          type: boolean
+          description: Determines if the APIKey is enabled for use
+          default: true
+        createdTimestamp:
+          $ref: '#/components/schemas/DateTime'
+        modifiedTimestamp:
+          $ref: '#/components/schemas/DateTime'
     DateTime:
       description: String in ISO 8601 format
       example: '2020-01-01T12:00:00Z'

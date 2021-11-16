@@ -22,29 +22,30 @@ module.exports = new HeaderAPIKeyStrategy(
   },
   false,
   async (apikey, done) => {
-    let isKeyFound = false;
-    // Input valdidation
-    if (!apikey) {
-      return done(null, false);
-    }
+    return done(null, 'test');
+    // let isKeyFound = false;
+    // // Input valdidation
+    // if (!apikey) {
+    //   return done(null, false);
+    // }
 
-    // Get environment API Keys
-    const environmentkeys = getEnvironmentAPIKeys();
-    if (!environmentkeys || !Array.isArray(environmentkeys || environmentkeys.length < 1)) {
-      return done(null, false);
-    }
+    // // Get environment API Keys
+    // const environmentkeys = getEnvironmentAPIKeys();
+    // if (!environmentkeys || !Array.isArray(environmentkeys || environmentkeys.length < 1)) {
+    //   return done(null, false);
+    // }
 
-    // Check the key against environmentkey
-    if (environmentkeys.includes(apikey)) {
-      isKeyFound = true;
-    }
+    // // Check the key against environmentkey
+    // if (environmentkeys.includes(apikey)) {
+    //   isKeyFound = true;
+    // }
 
-    // If the key was not found
-    if (!isKeyFound) {
-      console.log('❌ No matching API Key could be found');
-      return done(null, false);
-    }
+    // // If the key was not found
+    // if (!isKeyFound) {
+    //   console.log('❌ No matching API Key could be found');
+    //   return done(null, false);
+    // }
 
-    // The key was found
-    return done(null, apikey);
+    // // The key was found
+    // return done(null, apikey);
   })

@@ -10,11 +10,10 @@ const morgan = require('morgan');                                     // For out
 const cors = require('cors');                                         // For handeling CORS
 const swaggerUi = require('swagger-ui-express');                      // For hosting and displaying the APIs documentation
 const OpenApiValidator = require('express-openapi-validator');        // Validates all routes based on the requested resource
-const passport = require('passport');                                 // Engine for authenticating using different strategies
-const headerAPIKeyStrategy = require('./auth/authentication/apikey'); // Passport strategy for authenticating with APIKey
 const { determineDocumentationLinks } = require('./lib/oas');         // Function for determining if there are any documentation links to provide in case of an error
 require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })    // Load different .env files based on NODE_ENV
 const config = require('./config');                                   // Loads the config
+const db = require('./database/db');
 
 /*
   Determine variables
@@ -76,19 +75,35 @@ if (routeChildren && Array.isArray(routeChildren)) {
 }
 
 /*
+  Validate that the database is connected
+*/
+app.use('*', (req, res, next) => {
+  if(db.client.connection.readyState != 1) {
+      next({
+          status: 500,
+          message: 'Database is not connected'
+      })
+  } else {
+      next();
+  }
+})
+
+/*
   Authentication
 */
+const passport = require('passport');                                 // Engine for authenticating using different strategies
+const headerAPIKeyStrategy = require('./auth/authentication/apikey'); // Passport strategy for authenticating with APIKey
 // Register strategies
 passport.use(headerAPIKeyStrategy);
+// Initialize passport
+app.use(passport.initialize());
 // Use strategies
 app.all('*',
   passport.authenticate(['headerapikey'], { session: false }),
   (req, res, next) => {
+    console.log('✅ Authentication ok')
     // Setup some custom properties that should be usable in the routes and middleware
-    req.custom = {};
-    req.__metadata = {};
-    // This function triggers when a request has been successfully authenticated
-    req.custom.timestamp = new Date();
+    // req.custom = {};
     next();
   }
 );
@@ -97,8 +112,8 @@ app.all('*',
   Routes
 */
 // v1 routes
-// app.use('/api/v1/*', require('./routes/v1/beforeRouteMiddleware'));
-// app.use('/api/v1/matrikkelenheter', require('./routes/v1/matrikkelenheter'));
+app.use('/api/v1/jobs', require('./routes/v1/jobs'));
+app.use('/api/v1/readytasks', require('./routes/v1/readytasks'));
 // app.use('/api/v1/store', require('./routes/v1/store'));
 
 /*
@@ -109,7 +124,7 @@ app.use('/*', (req, res, next) => {
   let response;
   if (req.query.metadata) {
     let itemCount = 0;
-    if (req.response && Array.isArray(req.response)) {
+    if (res.body && Array.isArray(res.body)) {
       itemCount = req.response.length;
     }
     response = {
@@ -120,15 +135,15 @@ app.use('/*', (req, res, next) => {
         items: itemCount,
         ...req.__metadata
       },
-      data: req.response
+      data: res.body
     }
     const documentation = determineDocumentationLinks(req);
     if (documentation) { response.__metadata.documentation = documentation; }
   } else {
-    response = req.response;
+    response = res.body;
   }
-
-  res.type('json').send(JSON.stringify(response, null, 2));
+  res.json(response);
+  // res.type('json').send(JSON.stringify(response, null, 2));
 })
 
 /*
@@ -150,7 +165,7 @@ app.use((err, req, res, next) => {
     error = err;
   }
   // Attempt to link to documentation
-  const documentation = determineDocumentationLinks(req);
+  const documentation = determineDocumentationLinks(req, oasDocumentationEndpoints);
   if (documentation) { error.documentation = documentation; }
 
   // Output the error
