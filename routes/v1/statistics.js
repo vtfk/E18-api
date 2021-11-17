@@ -86,23 +86,26 @@ router.post('/', async (req, res, next) => {
 router.post('/maintain', async (req, res, next) => {
   try{
     // Retreive all completed jobs
-    let jobs = await Jobs.find();
+    let jobs = await Jobs.find( { status: 'complted' });
     if(!jobs || (Array.isArray(jobs) && jobs.length <= 0)) return next();
 
     console.log('== Jobs ==');
     vtfkutils.inspect(jobs);
 
-    jobs.forEach((job) => {
-      // Strip away any data fields
+    // This is done through a regular for loop to be able to use await
+    for(let i = 0; i < jobs.length; i++) {
+      let job = jobs[i];
+
+      // Make a copy of the job and strip
       let copy = JSON.parse(JSON.stringify(job));
       copy = vtfkutils.removeKeys(copy, ['data']);
-      console.log('== Copy ==');
-      vtfkutils.inspect(copy);
-      // vtfkutils.inspect(copy);
-      // Create statistics entry
 
-      // Delete 
-    })
+      // Create statistics entry
+      await Statistics.create(copy);
+
+      // Delete the job
+      await Jobs.deleteOne({ _id: job._id }) 
+    }
 
     next();
   } catch (err) {
