@@ -9,6 +9,9 @@ const commonValues = require('./common');
 */
 const operation = new mongoose.Schema({
   status: { type: String, enum: commonValues.operationStatuses }, // @karleinarb : Should this use jobStatuses so we only have one list ?
+  message: { type: String },
+  createdTimestamp: { type: Date },
+  modifiedTimestamp: { type: Date },
   trackingId: { type: String },
   data: { type: Object },
   error: { type: Object }
