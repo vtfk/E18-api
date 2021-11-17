@@ -16,8 +16,8 @@ const schema = new mongoose.Schema({
   parallel: { type: Boolean },
   retries: { type: Number, default: 0 },
   tasks: { type: [taskSchema], required: true },
-  createdTimestamp: { type: Date, default: Date.now() },
-  modifiedTimestamp: { type: Date, default: Date.now() }
+  createdTimestamp: { type: Date, default: new Date().toISOString() },
+  modifiedTimestamp: { type: Date, default: new Date().toISOString() }
 }, { collection: 'queue' })
 
 /*
