@@ -43,5 +43,6 @@ mongoose.connection.on('error', function (err) {
 module.exports = {
   client: mongoose,
   tools: tools,
-  Job: require('./models/job.model')
+  Job: require('./models/job.model'),
+  Statistic: require('./models/statistic.model')
 }

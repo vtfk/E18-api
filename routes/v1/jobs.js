@@ -26,17 +26,35 @@ router.post('/', async (req, res, next) => {
   try {
     // Validate that the tasks dont have duplicated types
     const types = []
-    console.log('== Tasks ==')
-    console.log(req.body.tasks)
-    req.body.tasks.forEach((task) => {
-      if (!types.includes(task.type)) types.push(task.type)
-      else throw new HTTPError(400, 'task type cannot be added more than once: ' + task.type)
+
+    let job = req.body;
+
+    let taskTypes = [];
+    let dependencyTags = [];
+    let foundDependencies = [];
+    job.tasks.forEach((task) => {
+      // Add tasktype to taskTypes if not previously found
+      if (!taskTypes.includes(task.type)) taskTypes.push(task.type);
+      // else throw new HTTPError(400, 'task type cannot be added more than once: ' + task.type)
+      if(task.dependencyTag && !dependencyTags.includes(task.dependencyTag)) dependencyTags.push(task.dependencyTag);
     })
-    console.log('== Types == ')
-    console.log(types)
+
+    // Check that all dependency tags are present
+    if(dependencyTags.length > 0) {
+      job.tasks.forEach((task) => {
+        if(task.dependencyTags) {
+          task.dependencyTags.forEach((tag) => {
+            if(!dependencyTags.includes(tag)) throw new HTTPError(400, `The dependency tags ${tag} is set but not used`);
+            if(!foundDependencies.incudes(tag)) foundDependencies.push(tag);
+          })
+        }
+      })
+    }
+    // Throw error if dependency tags are not matching
+    if(dependencyTags.length !== foundDependencies.length) throw new HTTPError(400, `The dependencyTags and dependencies does not match`);
 
     // Create and return the job
-    res.body = await Job.create(req.body)
+    res.body = await Job.create(job)
     next()
   } catch (err) {
     return next(err)
@@ -92,7 +110,7 @@ router.put('/:id/tasks/:taskid/checkout', async (req, res, next) => {
     if (taskIndex > 0) {
       for (let i = 0; i < taskIndex; i++) {
         if (job.tasks[i].status !== 'completed') throw new HTTPError(400, 'There are preceding tasks that are not completed yet')
-        collectedData[job.tasks[i].type] = job.tasks[i].operations.filter((o) => o.status === 'completed')[0].data
+        collectedData[job.tasks[i].type + '-' + (i)] = job.tasks[i].operations.filter((o) => o.status === 'completed')[0].data
       }
     }
 

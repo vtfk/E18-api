@@ -3,7 +3,8 @@
 */
 const express = require('express')
 const router = express.Router()
-const Job = require('../../database/db').Job
+const Statistics = require('../../database/db').Statistic;
+const Jobs = require('../../database/db').Statistic;
 
 /*
   Routes
@@ -67,6 +68,31 @@ router.get('/', async (req, res, next) => {
   } catch (err) {
     return next(err)
   }
+})
+
+/**
+ * Posts a new entry to the statistics collection
+ */
+router.post('/', async (req, res, next) => {
+  try {
+    req.body.e18 = false;
+    Statistics.create(req.body);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+})
+
+router.post('/cleanup', async (req, res, next) => {
+  // Retreive all completed jobs
+  let jobs = Jobs.find({ status: 'completed' });
+
+  jobs.forEach((job) => {
+    // Strip away any data fields
+
+    // Create statistics entry
+
+    // Delete 
+  })
 })
 
 /*

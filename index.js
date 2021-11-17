@@ -114,7 +114,7 @@ app.all('*',
 // v1 routes
 app.use('/api/v1/jobs', require('./routes/v1/jobs'))
 app.use('/api/v1/readytasks', require('./routes/v1/readytasks'))
-// app.use('/api/v1/store', require('./routes/v1/store'));
+app.use('/api/v1/statistics', require('./routes/v1/statistics'))
 
 /*
   Send response
