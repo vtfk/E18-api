@@ -12,8 +12,7 @@ const schema = new mongoose.Schema({
   jobId: { type: mongoose.SchemaTypes.ObjectId },
   system: { type: String, required: true },
   projectId: { type: Number, required: true },
-  type: { type: String },
-  status: { type: String, enum: commonValues.jobStatuses, default: 'waiting' },
+  status: { type: String, enum: commonValues.jobStatuses, default: 'waiting' }, // @karleinarb : Should this be a default for all statuses ?
   parallel: { type: Boolean },
   e18: { type: Boolean },
   retries: { type: Number, default: 0 },
