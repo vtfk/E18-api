@@ -4,7 +4,8 @@
 const express = require('express')
 const router = express.Router()
 const Statistics = require('../../database/db').Statistic;
-const Jobs = require('../../database/db').Statistic;
+const Jobs = require('../../database/db').Job;
+const vtfkutils = require('../../lib/vtfk-utilities/vtfk-utilities');
 
 /*
   Routes
@@ -83,16 +84,30 @@ router.post('/', async (req, res, next) => {
 })
 
 router.post('/maintain', async (req, res, next) => {
-  // Retreive all completed jobs
-  let jobs = Jobs.find({ status: 'completed' });
+  try{
+    // Retreive all completed jobs
+    let jobs = await Jobs.find();
+    if(!jobs || (Array.isArray(jobs) && jobs.length <= 0)) return next();
 
-  jobs.forEach((job) => {
-    // Strip away any data fields
+    console.log('== Jobs ==');
+    vtfkutils.inspect(jobs);
 
-    // Create statistics entry
+    jobs.forEach((job) => {
+      // Strip away any data fields
+      let copy = JSON.parse(JSON.stringify(job));
+      copy = vtfkutils.removeKeys(copy, ['data']);
+      console.log('== Copy ==');
+      vtfkutils.inspect(copy);
+      // vtfkutils.inspect(copy);
+      // Create statistics entry
 
-    // Delete 
-  })
+      // Delete 
+    })
+
+    next();
+  } catch (err) {
+    return Promise.reject(err);
+  }
 })
 
 /*

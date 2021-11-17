@@ -18,7 +18,7 @@ const schema = new mongoose.Schema({
   tasks: { type: [taskSchema], required: true },
   createdTimestamp: { type: Date, default: Date.now() },
   modifiedTimestamp: { type: Date, default: Date.now() }
-})
+}, { collection: 'queue' })
 
 /*
   Export model based on the schema
