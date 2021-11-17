@@ -756,8 +756,6 @@ components:
         - system
         - projectId
         - status
-        - startTimestamp
-        - endTimestamp
       properties:
         _id:
           $ref: '#/components/schemas/MongoDBId'
@@ -771,10 +769,6 @@ components:
           type: number
         status:
           $ref: '#/components/schemas/JobStatuses'
-        startTimestamp:
-          $ref: '#/components/schemas/DateTime'
-        endTimestamp:
-          $ref: '#/components/schemas/DateTime'
         createdBy:
           $ref: '#/components/schemas/Requestor'
         tasks:
