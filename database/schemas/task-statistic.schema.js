@@ -9,7 +9,7 @@ const commonValues = require('./common');
   Sub schema
 */
 const operation = new mongoose.Schema({
-  status: { type: String, enum: ['completed', 'failed'] },
+  status: { type: String, enum: commonValues.operationStatuses },
   trackingId: { type: String },
   error: { type: Object }
 })
@@ -22,6 +22,8 @@ const schema = new mongoose.Schema({
   method: { type: String },
   status: { type: String, enum: commonValues.taskStatuses, default: 'waiting' },
   retries: { type: Number, default: 0 },
+  dependencyTag: { type: String },
+  dependencies: { type: [String] },
   operations: { type: [operation] }
 })
 

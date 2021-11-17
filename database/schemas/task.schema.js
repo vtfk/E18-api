@@ -1,13 +1,14 @@
 /*
   Import dependencies
 */
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const commonValues = require('./common');
 
 /*
   Sub schema
 */
 const operation = new mongoose.Schema({
-  status: { type: String, enum: ['completed', 'failed'] },
+  status: { type: String, enum: commonValues.operationStatuses },
   trackingId: { type: String },
   data: { type: Object },
   error: { type: Object }
@@ -22,10 +23,11 @@ const schema = new mongoose.Schema({
   status: { type: String, enum: commonValues.taskStatuses, default: 'waiting' },
   retries: { type: Number, default: 0 },
   data: { type: Object },
-  responseData: { type: Object },
+  dependencyTag: { type: String },
+  dependencies: { type: [String] },
   operations: { type: [operation] },
-  createdTimestamp: { type: DateTime },
-  modifiedTimestamp: { type: DateTime }
+  createdTimestamp: { type: Date },
+  modifiedTimestamp: { type: Date }
 })
 
 module.exports = schema

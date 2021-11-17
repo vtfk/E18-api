@@ -82,7 +82,7 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.post('/cleanup', async (req, res, next) => {
+router.post('/maintain', async (req, res, next) => {
   // Retreive all completed jobs
   let jobs = Jobs.find({ status: 'completed' });
 

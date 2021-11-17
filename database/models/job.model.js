@@ -10,8 +10,10 @@ const commonValues = require('./common')
 */
 const schema = new mongoose.Schema({
   system: { type: String, required: true },
-  projectId: { type: Number, required: true },
+  type: { type: String },
   status: { type: String, enum: commonValues.jobStatuses, default: 'waiting' },
+  projectId: { type: Number, required: true },
+  parallel: { type: Boolean },
   retries: { type: Number, default: 0 },
   tasks: { type: [taskSchema], required: true },
   createdTimestamp: { type: Date, default: Date.now() },

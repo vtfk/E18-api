@@ -436,6 +436,27 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
+  /statistics/maintain:
+    post:
+      operationId: maintainStatistics
+      summary: Maintains statistics
+      description: Runs the procedure to move jobs over to statistics entries
+      tags:
+        - Statistics
+      security:
+        - APIKey: []
+        - Bearer: []
+      responses:
+        200:
+          description: Ok
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
   /apikeys:
     get:
       operationId: getAPIKeys
@@ -592,16 +613,22 @@ components:
           type: string
           description: The system this job originates from
           example: IDM
+        type:
+          type: string
+          description: The type of job this is for the sytem
+        status:
+          $ref: '#/components/schemas/JobStatuses'
         projectId:
           type: number
           description: The project id this job relates to
           minimum: 0
-        status:
-          $ref: '#/components/schemas/JobStatuses'
         parallel:
           type: boolean
           description: Should the tasks run in parallel?
           default: false
+        retries:
+          type: number
+          minimum: 0
         tasks:
           type: array
           minItems: 1
@@ -630,7 +657,8 @@ components:
       type: object
       description: Represents a job task
       required:
-        - type
+        - system
+        - method
       properties:
         _id:
           $ref: '#/components/schemas/MongoDBId'
@@ -638,8 +666,11 @@ components:
           description: The id of the job the task belongs to
           allOf:
             - $ref: '#/components/schemas/MongoDBId'
-        type:
-          $ref: '#/components/schemas/TaskTypes'
+        system:
+          $ref: '#/components/schemas/TaskSystems'
+        method:
+          type: string
+          description: The method to run for the system
         status:
           $ref: '#/components/schemas/TaskStatus'
         retries:
@@ -669,10 +700,14 @@ components:
               mapping:
                 completed: '#/components/schemas/TaskOperationSuccess'
                 failure: '#/components/schemas/TaskOperationFailure'
-    TaskTypes:
+        createdTimestamp:
+          $ref: '#/components/schemas/DateTime'
+        modifiedTimestamp:
+          $ref: '#/components/schemas/DateTime'
+    TaskSystems:
       description: All allowed task types
       type: string
-      enum: [svarut, p360archive, p360updateperson]
+      enum: [svarut, p360]
     TaskStatus:
       type: string
       enum:
@@ -695,6 +730,10 @@ components:
           type: string
         data:
           type: object
+        createdTimestamp:
+          $ref: '#/components/schemas/DateTime'
+        modifiedTimestamp:
+          $ref: '#/components/schemas/DateTime'
     TaskOperationFailure:
       type: object
       required:
@@ -707,6 +746,10 @@ components:
           type: string
         error:
           type: object
+        createdTimestamp:
+          $ref: '#/components/schemas/DateTime'
+        modifiedTimestamp:
+          $ref: '#/components/schemas/DateTime'
     StatisticsEntry:
       type: object
       required:
