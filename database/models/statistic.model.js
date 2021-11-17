@@ -11,6 +11,7 @@ const commonValues = require('./common')
 const schema = new mongoose.Schema({
   jobId: { type: mongoose.SchemaTypes.ObjectId },
   system: { type: String, required: true },
+  type: { type: String },
   projectId: { type: Number, required: true },
   status: { type: String, enum: commonValues.jobStatuses, default: 'waiting' }, // @karleinarb : Should this be a default for all statuses ?
   parallel: { type: Boolean },
