@@ -159,7 +159,7 @@ router.post('/:id/tasks/:taskid/operations', async (req, res, next) => {
       case 'completed':
         job.tasks[taskIndex].status = COMPLETED_STATUS
         break
-      case 'failure':
+      case 'failed':
         job.tasks[taskIndex].status = 'failed'
         break
     }

@@ -327,12 +327,12 @@ paths:
             schema:
               oneOf:
                 - $ref: '#/components/schemas/TaskOperationSuccess'
-                - $ref: '#/components/schemas/TaskOperationFailure'
+                - $ref: '#/components/schemas/TaskOperationFailed'
               discriminator:
                 propertyName: status
                 mapping:
                   completed: '#/components/schemas/TaskOperationSuccess'
-                  failure: '#/components/schemas/TaskOperationFailure'
+                  failed: '#/components/schemas/TaskOperationFailed'
       responses:
         200:
           description: Ok
@@ -694,12 +694,12 @@ components:
           items:
             oneOf:
               - $ref: '#/components/schemas/TaskOperationSuccess'
-              - $ref: '#/components/schemas/TaskOperationFailure'
+              - $ref: '#/components/schemas/TaskOperationFailed'
             discriminator:
               propertyName: status
               mapping:
                 completed: '#/components/schemas/TaskOperationSuccess'
-                failure: '#/components/schemas/TaskOperationFailure'
+                failed: '#/components/schemas/TaskOperationFailed'
         createdTimestamp:
           $ref: '#/components/schemas/DateTime'
         modifiedTimestamp:
@@ -711,7 +711,7 @@ components:
 
     TaskOperationStatuses:
       type: string
-      enum: [completed, failure]
+      enum: [completed, failed]
     TaskOperationSuccess:
       type: object
       required:
@@ -728,7 +728,7 @@ components:
           $ref: '#/components/schemas/DateTime'
         modifiedTimestamp:
           $ref: '#/components/schemas/DateTime'
-    TaskOperationFailure:
+    TaskOperationFailed:
       type: object
       required:
         - status
