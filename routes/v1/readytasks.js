@@ -42,9 +42,17 @@ router.get('/', async (req, res, next) => {
           return
         } else if (task.status === 'running') {
           return
-        } else if (i !== 0 && job.tasks[i - 1].status !== 'completed') {
+        } else if (!job.parallel && i !== 0 && job.tasks[i - 1].status !== 'completed') {
           return
         }
+        // If paralell exectuion, check if there are uncompleted dependencies
+        if(job.parallel) {
+          if (task.dependencies && Array.isArray(task.dependencies) && task.dependencies.length > 0) {
+            const incompleteDependencies = jobs.tasks.filter((t) => task.dependencies.includes(t.dependencyTag) && t.status !== 'completed');
+            if(incompleteDependencies.length > 0) return;
+          }
+        }
+
         if (req.query.type) {
           if (req.query.type === task.type) {
             readyTasks.push({

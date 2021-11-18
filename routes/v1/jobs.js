@@ -93,10 +93,11 @@ router.put('/:id/tasks/:taskid/checkout', async (req, res, next) => {
     if (job.status === 'completed') throw new HTTPError(400, 'Cannot checkout a task from a job that is completed')
 
     // Get the task
-    const taskIndex = job.tasks.findIndex((t) => t._id.toString() === req.params.taskid.toString())
+    const taskIndex = job.tasks.findIndex((t) => t._id.toString() === req.params.taskid.toString());
+    const task = job.tasks[taskIndex]; // Just use this for reading values, writes to this will not be saved. Use job.tasks[taskIndex] instead
 
     // Check if the task is unavailable to checkout
-    switch (job.tasks[taskIndex].status) {
+    switch (task.status) {
       case 'running':
         throw new HTTPError(400, 'Already running')
       case 'completed':
@@ -109,7 +110,20 @@ router.put('/:id/tasks/:taskid/checkout', async (req, res, next) => {
     const collectedData = {}
     if (taskIndex > 0) {
       for (let i = 0; i < taskIndex; i++) {
-        if (job.tasks[i].status !== 'completed') throw new HTTPError(400, 'There are preceding tasks that are not completed yet')
+        // If job mode is sequancial
+        if(!job.parallel) {
+          // Check if there are preceding tasks that are not completed yet
+          if (task.status !== 'completed' && job.parallel === false) throw new HTTPError(400, 'There are preceding tasks that are not completed yet');
+        } else {
+          // Check if there are dependant tasks that are not completed yet
+          if (task.dependencies && Array.isArray(task.dependencies) && task.dependencies.length > 0) {
+            const incompleteDependencies = jobs.tasks.filter((t) => task.dependencies.includes(t.dependencyTag) && t.status !== 'completed');
+            if(incompleteDependencies.length > 0) {
+              throw new HTTPError(400, `There are ${incompleteDependencies.length} dependant tasks that are not completed yet`)
+            }
+          }
+        }
+        // Add completed information to the array
         collectedData[job.tasks[i].type + '-' + (i)] = job.tasks[i].operations.filter((o) => o.status === 'completed')[0].data
       }
     }

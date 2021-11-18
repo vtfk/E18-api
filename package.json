@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cross-env NODE_ENV=development nodemon index.js"
+    "dev": "cross-env NODE_ENV=development nodemon --delay 500ms index.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
     "audit": "^0.0.6",
     "cross-env": "^7.0.3",
     "jest": "^27.3.1",
+    "mongodb-memory-server": "^8.0.2",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.15",
     "standardx": "^7.0.0"
