@@ -617,7 +617,7 @@ components:
           type: string
           description: The type of job this is for the sytem
         status:
-          $ref: '#/components/schemas/JobStatuses'
+          $ref: '#/components/schemas/Statuses'
         projectId:
           type: number
           description: The project id this job relates to
@@ -645,7 +645,7 @@ components:
           $ref: '#/components/schemas/DateTime'
         modifiedBy:
           $ref: '#/components/schemas/Requestor'
-    JobStatuses:
+    Statuses:
       type: string
       enum:
         - waiting
@@ -672,7 +672,7 @@ components:
           type: string
           description: The method to run for the system
         status:
-          $ref: '#/components/schemas/TaskStatus'
+          $ref: '#/components/schemas/Statuses'
         retries:
           type: number
           description: The number of retries of this task
@@ -708,13 +708,7 @@ components:
       description: All allowed task types
       type: string
       enum: [svarut, p360]
-    TaskStatus:
-      type: string
-      enum:
-        - waiting
-        - running
-        - completed
-        - failed
+
     TaskOperationStatuses:
       type: string
       enum: [completed, failure]
@@ -725,7 +719,7 @@ components:
         - data
       properties:
         status:
-            $ref: '#/components/schemas/TaskOperationStatuses'
+          $ref: '#/components/schemas/TaskOperationStatuses'
         message:
           type: string
         data:
@@ -737,10 +731,10 @@ components:
     TaskOperationFailure:
       type: object
       required:
-        - success
+        - status
         - error
       properties:
-        type:
+        status:
           $ref: '#/components/schemas/TaskOperationStatuses'
         message:
           type: string
@@ -754,8 +748,12 @@ components:
       type: object
       required:
         - system
+        - type
         - projectId
         - status
+        - tasks
+        - createdTimestamp
+        - modifiedTimestamp
       properties:
         _id:
           $ref: '#/components/schemas/MongoDBId'
@@ -765,10 +763,12 @@ components:
             - $ref: '#/components/schemas/MongoDBId'
         system:
           type: string
+        type:
+          type: string
         projectId:
           type: number
         status:
-          $ref: '#/components/schemas/JobStatuses'
+          $ref: '#/components/schemas/Statuses'
         createdBy:
           $ref: '#/components/schemas/Requestor'
         tasks:
@@ -776,6 +776,10 @@ components:
           minItems: 1
           items:
             $ref: '#/components/schemas/Task'
+        createdTimestamp:
+          $ref: '#/components/schemas/DateTime'
+        modifiedTimestamp:
+          $ref: '#/components/schemas/DateTime'
     APIKey:
       description: Represents an E18 APIKey
       type: object
