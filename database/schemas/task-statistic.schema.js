@@ -2,14 +2,15 @@
   Import dependencies
 */
 const mongoose = require('mongoose')
-const commonValues = require('./common');
+const commonSchemasValues = require('./common');
+const commonValues = require('../common');
 
 
 /*
   Sub schema
 */
 const operation = new mongoose.Schema({
-  status: { type: String, enum: commonValues.operationStatuses }, // @karleinarb : Should this use jobStatuses so we only have one list ?
+  status: { type: String, enum: commonSchemasValues.operationStatuses },
   createdTimestamp: { type: Date },
   modifiedTimestamp: { type: Date },
   trackingId: { type: String },
@@ -23,7 +24,7 @@ const operation = new mongoose.Schema({
 const schema = new mongoose.Schema({
   system: { type: String, enum: commonValues.taskSystems },
   method: { type: String },
-  status: { type: String, enum: commonValues.taskStatuses, default: 'waiting' }, // @karleinarb : Should this use jobStatuses so we only have one list ?
+  status: { type: String, enum: commonValues.statuses, default: 'waiting' },
   retries: { type: Number, default: 0 },
   dependencyTag: { type: String },
   dependencies: { type: [String] },

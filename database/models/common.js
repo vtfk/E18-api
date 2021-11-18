@@ -1,1 +1,0 @@
-module.exports.jobStatuses = ['waiting', 'running', 'suspended', 'completed', 'failed'];

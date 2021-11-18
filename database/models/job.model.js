@@ -3,7 +3,7 @@
 */
 const mongoose = require('mongoose')
 const taskSchema = require('../schemas/task.schema')
-const commonValues = require('./common')
+const commonValues = require('../common')
 
 /*
   Schema definition
@@ -11,7 +11,7 @@ const commonValues = require('./common')
 const schema = new mongoose.Schema({
   system: { type: String, required: true },
   type: { type: String },
-  status: { type: String, enum: commonValues.jobStatuses, default: 'waiting' }, // @karleinarb : Should this be a default for all statuses ?
+  status: { type: String, enum: commonValues.statuses, default: 'waiting' },
   projectId: { type: Number, required: true },
   parallel: { type: Boolean },
   retries: { type: Number, default: 0 },
