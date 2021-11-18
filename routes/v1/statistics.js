@@ -77,7 +77,8 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     req.body.e18 = false;
-    Statistics.create(req.body);
+    res.body = await Statistics.create(req.body);
+    next()
   } catch (err) {
     return Promise.reject(err);
   }
