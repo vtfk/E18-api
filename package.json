@@ -4,8 +4,8 @@
   "description": "VTFK sitt kø-system systemoppgaver",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cross-env NODE_ENV=development nodemon --delay 500ms index.js"
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "cross-env NODE_ENV=development standardx && jest"
   },
   "repository": {
     "type": "git",
@@ -40,5 +40,13 @@
     "passport-headerapikey": "^1.2.2",
     "swagger-ui-express": "^4.1.6",
     "yamljs": "^0.3.0"
+  },
+  "standardx": {
+    "env": [
+      "jest"
+    ],
+    "ignore": [
+      "tests/dev.js"
+    ]
   }
 }

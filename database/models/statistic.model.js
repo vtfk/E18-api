@@ -2,7 +2,7 @@
   Import dependencies
 */
 const mongoose = require('mongoose')
-const taskSchema = require('../schemas/task-statistic.schema');
+const taskSchema = require('../schemas/task-statistic.schema')
 const commonValues = require('../common')
 
 /*

@@ -2,14 +2,14 @@
   Import the dependencies
 */
 const mongoose = require('mongoose')
-const MongoMemoryServer = require('mongodb-memory-server').MongoMemoryServer;
+const MongoMemoryServer = require('mongodb-memory-server').MongoMemoryServer
 const config = require('../config')
 const tools = require('./db.tools')
 
 /*
   Variables
 */
-let mongoMemoryServer = undefined;
+let mongoMemoryServer
 const mongooseConnectionOptions = {
   useUnifiedTopology: false,
   useNewUrlParser: true
@@ -17,16 +17,16 @@ const mongooseConnectionOptions = {
 
 // Function for connecting to MongoDB or MockDatabase
 // Must be async because of MongoMemoryServer.create is async
-async function connect() {
+async function connect () {
   // If mock, spin up an instance
-  if(config.useMock && !mongoMemoryServer) {
+  if (config.useMock && !mongoMemoryServer) {
     console.log('ℹ️ Creating mock database')
     mongoMemoryServer = await MongoMemoryServer.create({
       instance: {
         dbName: 'E18'
       }
-    });
-    config.dbConnetionString = mongoMemoryServer.getUri() + 'E18';
+    })
+    config.dbConnetionString = mongoMemoryServer.getUri() + 'E18'
   }
   // Connect to the server
   mongoose.connect(
@@ -35,14 +35,14 @@ async function connect() {
     (err) => {
       if (err) {
         console.log('❌ Error connecting to database')
-        console.error(err);
+        console.error(err)
       }
     }
   )
   mongoose.Promise = global.Promise
 }
 
-connect();
+connect()
 
 /*
   Handle connectivity events
@@ -64,7 +64,7 @@ mongoose.connection.on('error', function (err) {
 })
 
 process.on('exit', async () => {
-  if(mongoMemoryServer) await mongoMemoryServer.exit();
+  if (mongoMemoryServer) await mongoMemoryServer.exit()
 })
 
 module.exports = {

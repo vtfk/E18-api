@@ -2,9 +2,8 @@
   Import dependencies
 */
 const mongoose = require('mongoose')
-const commonSchemasValues = require('./common');
-const commonValues = require('../common');
-
+const commonSchemasValues = require('./common')
+const commonValues = require('../common')
 
 /*
   Sub schema
