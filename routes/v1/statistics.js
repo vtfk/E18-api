@@ -35,34 +35,6 @@ router.get('/', async (req, res, next) => {
     // Just make double sure that the jobs are actually not completed
     jobs = jobs.filter((j) => j.status !== 'completed')
 
-    // Determine if the tasks in the job matches the criteria to be checked out
-    jobs.forEach((job) => {
-      const collectedData = {}
-      job.tasks.forEach((task, i) => {
-        if (task.status === 'completed') {
-          collectedData[task.type] = task.operations.find((o) => o.status === 'completed').data
-          return
-        } else if (task.status === 'running') {
-          return
-        } else if (i !== 0 && job.tasks[i - 1].status !== 'completed') {
-          return
-        }
-        if (req.query.type) {
-          if (req.query.type === task.type) {
-            readyTasks.push({
-              ...JSON.parse(JSON.stringify(task)),
-              collectedData
-            })
-          }
-        } else {
-          readyTasks.push({
-            ...JSON.parse(JSON.stringify(task)),
-            collectedData
-          })
-        }
-      })
-    })
-
     // Only return jobs that are applicable to run
     res.body = readyTasks
     next()
