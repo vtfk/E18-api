@@ -151,28 +151,6 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
-    delete:
-      operationId: deleteJob
-      summary: Deletes a job
-      description: Deletes a job from the jobqueue
-      tags:
-        - Jobs
-      security:
-        - APIKey: []
-        - Bearer: []
-      parameters:
-        - $ref: "#/components/parameters/id"
-      responses:
-        200:
-          description: Ok
-        400:
-          $ref: '#/components/responses/400'
-        401:
-          $ref: '#/components/responses/401'
-        404:
-          $ref: '#/components/responses/404'
-        500:
-          $ref: '#/components/responses/500'
   /readytasks:
     get:
       operationId: getReadyTasks
@@ -348,32 +326,6 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
-  /jobs/{id}/tasks/{taskid}:
-    delete:
-      summary: Deletes a task
-      tags:
-        - Tasks
-      security:
-        - APIKey: []
-        - Bearer: []
-      parameters:
-        - $ref: "#/components/parameters/id"
-        - in: path
-          name: taskid
-          required: true
-          schema:
-            $ref: '#/components/schemas/MongoDBId'
-      responses:
-        200:
-          description: Ok
-        400:
-          $ref: '#/components/responses/400'
-        401:
-          $ref: '#/components/responses/401'
-        404:
-          $ref: '#/components/responses/404'
-        500:
-          $ref: '#/components/responses/500'
   /statistics:
     get:
       operationId: getStatistics
@@ -398,7 +350,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/StatisticsEntry'
+                  $ref: '#/components/schemas/Job'
         400:
           $ref: '#/components/responses/400'
         401:
