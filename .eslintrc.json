@@ -4,5 +4,11 @@
         "semi": 0,
         "spaced-comment": ["error", "always", { "exceptions": ["/"] }],
         "no-multi-spaces": ["error", { "ignoreEOLComments": true }]
+    },
+    "parserOptions": {
+        "ecmaVersion": 2020
+    },
+    "env": {
+        "es6": true
     }
 }
