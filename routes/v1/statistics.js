@@ -87,11 +87,8 @@ router.post('/', async (req, res, next) => {
 router.post('/maintain', async (req, res, next) => {
   try {
     // Retreive all completed jobs
-    const jobs = await Jobs.find({ status: 'complted' })
+    const jobs = await Jobs.find({ status: 'completed' })
     if (!jobs || (Array.isArray(jobs) && jobs.length <= 0)) return next()
-
-    console.log('== Jobs ==')
-    vtfkutils.inspect(jobs)
 
     // This is done through a regular for loop to be able to use await
     for (let i = 0; i < jobs.length; i++) {

@@ -4,6 +4,7 @@
 const express = require('express')
 const router = express.Router()
 const Job = require('../../database/db').Job
+const Statistics = require('../../database/db').Statistic
 const dbTools = require('../../database/db.tools.js')
 const HTTPError = require('../../lib/vtfk-errors/httperror')
 
@@ -27,10 +28,12 @@ router.post('/', async (req, res, next) => {
     // Validate that the tasks dont have duplicated types
     const job = req.body
 
-    const taskTypes = []
-    const dependencyTags = []
+    const taskTypes = []          // Array for alle unike task typer som er funnet i jobben
+    const dependencyTags = []     // Array over alle unike 
     const foundDependencies = []
     job.tasks.forEach((task) => {
+      // If E18 !== false and task data is empty
+      if((job.e18 !== false || job.E18 !== false) && !task.data || Object.keys(task.data).length <= 0) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
       // Add tasktype to taskTypes if not previously found
       if (!taskTypes.includes(task.type)) taskTypes.push(task.type)
       // else throw new HTTPError(400, 'task type cannot be added more than once: ' + task.type)
@@ -62,7 +65,12 @@ router.post('/', async (req, res, next) => {
 // GET job by id
 router.get('/:id', async (req, res, next) => {
   try {
-    res.body = await Job.findById(req.params.id)
+    let result = await Job.findById(req.params.id);
+    if(!result) result = await Statistics.findById(req.params.id);
+
+    if(!result) throw new HTTPError(404, 'Job not found in queue or statistics');
+
+    res.body = result;
     next()
   } catch (err) {
     return next(err)

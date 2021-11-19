@@ -633,8 +633,6 @@ components:
           type: array
           minItems: 1
           items:
-            required:
-              - data
             allOf:
               - $ref: '#/components/schemas/Task'
         createdTimestamp:
@@ -708,7 +706,6 @@ components:
       description: All allowed task types
       type: string
       enum: [svarut, p360]
-
     TaskOperationStatuses:
       type: string
       enum: [completed, failed]
