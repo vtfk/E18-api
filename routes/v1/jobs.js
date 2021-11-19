@@ -33,7 +33,7 @@ router.post('/', async (req, res, next) => {
     const foundDependencies = []
     job.tasks.forEach((task) => {
       // If E18 !== false and task data is empty
-      if((job.e18 !== false || job.E18 !== false) && !task.data || Object.keys(task.data).length <= 0) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
+      if(job.e18 !== false && !task.data) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
       // Add tasktype to taskTypes if not previously found
       if (!taskTypes.includes(task.type)) taskTypes.push(task.type)
       // else throw new HTTPError(400, 'task type cannot be added more than once: ' + task.type)

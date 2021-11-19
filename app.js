@@ -16,7 +16,6 @@ const config = require('./config') // Loads the config
 const db = require('./database/db')
 db.connect()
 
-
 /*
   Determine variables
 */

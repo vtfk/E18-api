@@ -17,12 +17,12 @@ const headers = {
 
 beforeAll(async (done) => {
   // Run the api;
-  console.log('Before all: ⏳ Waiting for database connectivity');
-  console.log('Before all: Mongoose ready state: ' + db.client.connection.readyState);
-  console.log('Before all: == Connection promise ==');
-  console.log(db.connectionPromise);
+  // console.log('Before all: ⏳ Waiting for database connectivity');
+  // console.log('Before all: Mongoose ready state: ' + db.client.connection.readyState);
+  // console.log('Before all: == Connection promise ==');
+  // console.log(db.connectionPromise);
   await db.connect();
-  console.log('Should be connected now');
+  // console.log('Should be connected now');
 
   done();
 });
