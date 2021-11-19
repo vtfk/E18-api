@@ -32,10 +32,7 @@ connect();
 async function connect() {
   // Check if database is connecting or connected
   if(connectionPromise) return connectionPromise;
-  if(mongoose.connection.readyState !== 0) {
-    console.log('DATABASE IS ALREADY CONNECTED');
-    return;
-  }
+  if(mongoose.connection.readyState !== 0) return;
 
   // Create common promise for both the MongoMemoryServer and Mongoose connection
   // resolveConnection will be called when both are completed, in the meantime any calls to connect() will receive this promise.
@@ -43,7 +40,6 @@ async function connect() {
   connectionPromise = new Promise((resolve, reject) => { resolveConnection = resolve; rejectConnection = reject; })
 
   // If mock, spin up an instance
-  console.log(config.useMock);
   if (config.useMock && config.useMock != false && !mongoMemoryServer) {
     console.log('ℹ️ Creating mock database')
     mongoMemoryServer = await MongoMemoryServer.create(mongoMemoryServerOptions);
