@@ -71,19 +71,7 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-/**
- * Posts a new entry to the statistics collection
- */
-router.post('/', async (req, res, next) => {
-  try {
-    req.body.e18 = false
-    res.body = await Statistics.create(req.body)
-    next()
-  } catch (err) {
-    return Promise.reject(err)
-  }
-})
-
+// Maintenance - Creates statistics and deletes completed jobs
 router.post('/maintain', async (req, res, next) => {
   try {
     // Retreive all completed jobs

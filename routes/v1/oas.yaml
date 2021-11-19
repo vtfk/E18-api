@@ -407,35 +407,6 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
-    post:
-      operationId: postStatistics
-      summary: Post a new entry to the statistics
-      description: This is done automatically by E18, but jobs outside of E18 can report here
-      tags:
-        - Statistics
-      security:
-        - APIKey: []
-        - Bearer: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StatisticsEntry'
-      responses:
-        200:
-          description: Ok
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StatisticsEntry'
-        400:
-          $ref: '#/components/responses/400'
-        401:
-          $ref: '#/components/responses/401'
-        404:
-          $ref: '#/components/responses/404'
-        500:
-          $ref: '#/components/responses/500'
   /statistics/maintain:
     post:
       operationId: maintainStatistics
@@ -737,42 +708,6 @@ components:
           type: string
         error:
           type: object
-        createdTimestamp:
-          $ref: '#/components/schemas/DateTime'
-        modifiedTimestamp:
-          $ref: '#/components/schemas/DateTime'
-    StatisticsEntry:
-      type: object
-      required:
-        - system
-        - type
-        - projectId
-        - status
-        - tasks
-        - createdTimestamp
-        - modifiedTimestamp
-      properties:
-        _id:
-          $ref: '#/components/schemas/MongoDBId'
-        jobId:
-          description: The id of the job this statistics entry if for
-          allOf:
-            - $ref: '#/components/schemas/MongoDBId'
-        system:
-          type: string
-        type:
-          type: string
-        projectId:
-          type: number
-        status:
-          $ref: '#/components/schemas/Statuses'
-        createdBy:
-          $ref: '#/components/schemas/Requestor'
-        tasks:
-          type: array
-          minItems: 1
-          items:
-            $ref: '#/components/schemas/Task'
         createdTimestamp:
           $ref: '#/components/schemas/DateTime'
         modifiedTimestamp:

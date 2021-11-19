@@ -102,7 +102,7 @@ app.use(passport.initialize())
 app.all('*',
   passport.authenticate(['headerapikey'], { session: false }),
   (req, res, next) => {
-    console.log('✅ Authentication ok')
+    if(process.env.NODE_ENV !== 'test') console.log('✅ Authentication ok');
     // Setup some custom properties that should be usable in the routes and middleware
     // req.custom = {};
     next()
@@ -151,7 +151,7 @@ app.use('/*', (req, res, next) => {
   Error handeling
 */
 app.use((err, req, res, next) => {
-  console.log('❌ Error occured ❌')
+  if(process.env.NODE_ENV !== 'test') console.log('❌ Error occured ❌')
   // Construct an error object
   let error = {}
   // Setup the error object based on type
@@ -170,7 +170,7 @@ app.use((err, req, res, next) => {
   if (documentation) { error.documentation = documentation }
 
   // Output the error
-  console.error(error)
+  if(process.env.NODE_ENV !== 'test') console.error(error)
 
   // Send the error
   res.status(err.status || 500).json(error)

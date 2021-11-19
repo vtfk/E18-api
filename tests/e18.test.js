@@ -32,22 +32,47 @@ beforeAll(async (done) => {
 */
 // Jobs
 describe('Test all jobs endpoint', () => {
-  describe('POST: api/v1/jobs', () => {
-    test('Valid Job', async () => {
-      const body = require('./requests/post_job_valid')
-      const response = await request(app).post('/api/v1/jobs').set(headers).send(body);
-      expect(response.status).toBe(200);
-      expect(response.body).not.toBeUndefined();
+  // Test with complete data
+  describe('POST: api/v1/jobs - Valid data', () => {
+    const examples = require('./requests/post_job_valid.js');
+    examples.forEach((e) => {
+      test(e.description, async () => {
+        const body = require('./requests/post_job_invalid')
+        const response = await request(app).post('/api/v1/jobs').set(headers).send(e.data);
+        expect(response.status).toBe(200);
+        expect(response.body).not.toBeUndefined();
+      })
     })
-
-    test('Valid self execution job', async () => {
-      const body = require('./requests/post_job_valid externalExecution')
-      const response = await request(app).post('/api/v1/jobs').set(headers).send(body);
-      expect(response.status).toBe(200);
-      expect(response.body).not.toBeUndefined();
-    })
-
   })
+
+  // Test with incomplete or invalid data
+  describe('POST: api/v1/jobs - Invalid data', () => {
+    const invalidExamples = require('./requests/post_job_invalid.js');
+    for(let name in invalidExamples) {
+      test(name, async () => {
+        const body = invalidExamples[name];
+        const response = await request(app).post('/api/v1/jobs').set(headers).send(body);
+        expect(response.status).not.toBe(200);
+      })
+    }
+  })
+
+  describe('GET: api/v1/jobs', () => {
+    let jobs = [];
+    test('Get the two posted jobs', async () => {
+      response = await request(app).get('/api/v1/jobs').set(headers).send();
+      jobs = response.body.data;
+      expect(response.status).toBe(200);
+      expect(jobs.length).toBe(2);
+    })
+
+    test('Get the first job by id', async () => {
+      response = await request(app).get('/api/v1/jobs/' + jobs[0]._id).set(headers).send();
+      expect(response.status).toBe(200);
+      expect(response.body).toBeTruthy();
+    })
+  })
+
 })
 
 afterAll(async () => {
