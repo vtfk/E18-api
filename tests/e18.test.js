@@ -5,6 +5,7 @@ require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` }) // Load diffe
 const app = require('../app').app;
 const request = require('supertest');
 const db = require('../database/db');
+const utilities = require('../lib/vtfk-utilities/vtfk-utilities');
 
 /*
   Variables
@@ -23,7 +24,6 @@ beforeAll(async (done) => {
   // console.log(db.connectionPromise);
   await db.connect();
   // console.log('Should be connected now');
-
   done();
 });
 
@@ -35,10 +35,9 @@ describe('Test all jobs endpoint', () => {
   // Test with complete data
   describe('POST: api/v1/jobs - Valid data', () => {
     const examples = require('./requests/post_job_valid.js');
-    examples.forEach((e) => {
-      test(e.description, async () => {
-        const body = require('./requests/post_job_invalid')
-        const response = await request(app).post('/api/v1/jobs').set(headers).send(e.data);
+    examples.forEach((example) => {
+      test(example.description, async () => {
+        const response = await request(app).post('/api/v1/jobs').set(headers).send(example.data);
         expect(response.status).toBe(200);
         expect(response.body).not.toBeUndefined();
       })
@@ -63,7 +62,7 @@ describe('Test all jobs endpoint', () => {
       response = await request(app).get('/api/v1/jobs').set(headers).send();
       jobs = response.body.data;
       expect(response.status).toBe(200);
-      expect(jobs.length).toBe(2);
+      expect(jobs.length).toBe(3);
     })
 
     test('Get the first job by id', async () => {
@@ -72,7 +71,6 @@ describe('Test all jobs endpoint', () => {
       expect(response.body).toBeTruthy();
     })
   })
-
 })
 
 afterAll(async () => {

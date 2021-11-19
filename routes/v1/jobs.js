@@ -67,7 +67,7 @@ router.post('/', async (req, res, next) => {
     // Make sure that all the specified dependecytags has been used by the dependencies
     if (dependencyTags.length > 0) {
       dependencyTags.forEach((tag) => {
-        let match = dependencies.find(tag);
+        let match = dependencies.find((d) => dependencyTags.includes(d));
         if(!match) throw new HTTPError(400, `The dependency tags ${tag} is set but not used`)
       })
     }
@@ -75,7 +75,7 @@ router.post('/', async (req, res, next) => {
     // Make sure that all dependencies has a correlating tag
     if (dependencies.length > 0) {
       dependencies.forEach((dependency) => {
-        let match = dependencyTags.find(dependency);
+        let match = dependencyTags.find((t) => dependencies.includes(t));
         if(!match) throw new HTTPError(400, `The dependency ${dependency} is used, but has not been set`)
       })
     }
