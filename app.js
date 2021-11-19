@@ -173,7 +173,7 @@ app.use((err, req, res, next) => {
   if(process.env.NODE_ENV !== 'test') console.error(error)
 
   // Send the error
-  res.status(err.status || 500).json(error)
+  res.status(err.status || err.statusCode || 500).json(error)
   next()
 })
 

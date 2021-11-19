@@ -51,7 +51,7 @@ describe('Test all jobs endpoint', () => {
       test(name, async () => {
         const body = invalidExamples[name];
         const response = await request(app).post('/api/v1/jobs').set(headers).send(body);
-        expect(response.status).not.toBe(200);
+        expect(response.status).toBe(400);
       })
     }
   })

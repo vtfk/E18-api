@@ -79,7 +79,7 @@ exports.getMongooseTermsFromQuery = (query) => {
         sort = sort.trim()
         // Split the order by ' '
         const parts = sort.split(' ')
-        if (parts.length < 2) throw new HTTPError(500, `$orderby by is not correctly formated: ${query.$orderby}`)
+        if (parts.length < 2) throw new HTTPError(400, `$orderby by is not correctly formated: ${query.$orderby}`)
         // Get sort name
         const name = parts[0]
         if (parts[1] === 'desc') { type = -1 }

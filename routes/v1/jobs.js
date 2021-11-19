@@ -79,16 +79,6 @@ router.post('/', async (req, res, next) => {
         if(!match) throw new HTTPError(400, `The dependency ${dependency} is used, but has not been set`)
       })
     }
-
-    // Throw error if dependency tags are not matching
-    if(dependencyTags.length > 0) {
-      console.log('Found dependencies (' + dependencies.length + ')');
-      console.log(dependencies);
-      console.log('Dependency tags (' + dependencyTags.length + ')');
-      console.log(dependencyTags);
-      console.log('JOB');
-      utilities.inspect(req.body);
-    }
     
     // Create and return the job
     res.body = await Job.create(job)
