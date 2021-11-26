@@ -96,5 +96,5 @@ describe('POST: api/v1/jobs/tasks - Invalid data', () => {
 })
 
 afterAll(async () => {
-  // await db.disconnect();
+  await db.disconnect();
 })
