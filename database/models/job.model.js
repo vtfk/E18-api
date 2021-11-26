@@ -13,7 +13,7 @@ const schema = new mongoose.Schema({
   type: { type: String },
   status: { type: String, enum: commonValues.statuses, default: 'waiting' },
   projectId: { type: Number, required: true },
-  e18: { type: Boolean, default: false },
+  e18: { type: Boolean, default: true },
   parallel: { type: Boolean, default: false },
   retries: { type: Number, default: 0 },
   tasks: { type: [taskSchema], required: true },

@@ -4,15 +4,13 @@
 const mongoose = require('mongoose')
 const MongoMemoryServer = require('mongodb-memory-server').MongoMemoryServer
 const config = require('../config')
-const tools = require('./db.tools')
 
 /*
   State & Variables
 */
-let isConnecting = false;
-let connection = undefined;             // The mongoose connection
-let connectionPromise = undefined  // This will be a promise when mongoose is connecting
-let mongoMemoryServer = undefined;      // The mongoMemoryServer object
+let connection;             // The mongoose connection
+let connectionPromise  // This will be a promise when mongoose is connecting
+let mongoMemoryServer;      // The mongoMemoryServer object
 const mongooseConnectionOptions = {     // The mongoose connection options
   useUnifiedTopology: false,
   useNewUrlParser: true
@@ -23,16 +21,15 @@ const mongoMemoryServerOptions = {
   }
 }
 
-
 connect();
 
 /*
   Functions
 */
-async function connect() {
+async function connect () {
   // Check if database is connecting or connected
-  if(connectionPromise) return connectionPromise;
-  if(mongoose.connection.readyState !== 0) return;
+  if (connectionPromise) return connectionPromise;
+  if (mongoose.connection.readyState !== 0) return;
 
   // Create common promise for both the MongoMemoryServer and Mongoose connection
   // resolveConnection will be called when both are completed, in the meantime any calls to connect() will receive this promise.
@@ -40,7 +37,7 @@ async function connect() {
   connectionPromise = new Promise((resolve, reject) => { resolveConnection = resolve; rejectConnection = reject; })
 
   // If mock, spin up an instance
-  if (config.useMock && config.useMock != false && !mongoMemoryServer) {
+  if (config.useMock && config.useMock !== false && !mongoMemoryServer) {
     console.log('ℹ️ Creating mock database')
     mongoMemoryServer = await MongoMemoryServer.create(mongoMemoryServerOptions);
     config.dbConnectionString = mongoMemoryServer.getUri() + 'E18'
@@ -60,7 +57,7 @@ async function connect() {
   }
 }
 
-async function disconnect() {
+async function disconnect () {
   console.log('ℹ️ Disconnecting database')
   if (connection) connection.disconnect();
   mongoose.disconnect();

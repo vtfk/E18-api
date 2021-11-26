@@ -1,7 +1,6 @@
 /*
   Import dependencies
 */
-const http = require('http') // For hosting the web server
 const fs = require('fs') // For working with the file system
 const path = require('path') // For combining paths
 const yamljs = require('yamljs') // For converting YAML to JSON
@@ -12,15 +11,8 @@ const swaggerUi = require('swagger-ui-express') // For hosting and displaying th
 const OpenApiValidator = require('express-openapi-validator') // Validates all routes based on the requested resource
 const { determineDocumentationLinks } = require('./lib/oas') // Function for determining if there are any documentation links to provide in case of an error
 require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` }) // Load different .env files based on NODE_ENV
-const config = require('./config') // Loads the config
 const db = require('./database/db')
 db.connect()
-
-/*
-  Determine variables
-*/
-const host = config.hostname // Get the hosting address
-const port = config.port // Get the hosting port
 
 /*
   Setup express instance
@@ -102,7 +94,7 @@ app.use(passport.initialize())
 app.all('*',
   passport.authenticate(['headerapikey'], { session: false }),
   (req, res, next) => {
-    if(process.env.NODE_ENV !== 'test') console.log('✅ Authentication ok');
+    if (process.env.NODE_ENV !== 'test') console.log('✅ Authentication ok');
     // Setup some custom properties that should be usable in the routes and middleware
     // req.custom = {};
     next()
@@ -151,7 +143,7 @@ app.use('/*', (req, res, next) => {
   Error handeling
 */
 app.use((err, req, res, next) => {
-  if(process.env.NODE_ENV !== 'test') console.log('❌ Error occured ❌')
+  if (process.env.NODE_ENV !== 'test') console.log('❌ Error occured ❌')
   // Construct an error object
   let error = {}
   // Setup the error object based on type
@@ -170,7 +162,7 @@ app.use((err, req, res, next) => {
   if (documentation) { error.documentation = documentation }
 
   // Output the error
-  if(process.env.NODE_ENV !== 'test') console.error(error)
+  if (process.env.NODE_ENV !== 'test') console.error(error)
 
   // Send the error
   res.status(err.status || err.statusCode || 500).json(error)

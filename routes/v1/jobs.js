@@ -7,7 +7,6 @@ const Job = require('../../database/db').Job
 const Statistics = require('../../database/db').Statistic
 const dbTools = require('../../database/db.tools.js')
 const HTTPError = require('../../lib/vtfk-errors/httperror');
-const utilities = require('../../lib/vtfk-utilities/vtfk-utilities');
 
 /*
   Routes
@@ -29,33 +28,33 @@ router.post('/', async (req, res, next) => {
     // Validate that the tasks dont have duplicated types
     const job = req.body
 
-    let taskTypes = []          // Array for alle unike task typer som er funnet i jobben
-    let dependencyTags = []     // Array over alle unike 
-    let dependencies = []
+    const taskTypes = []          // Array for alle unike task typer som er funnet i jobben
+    const dependencyTags = []     // Array over alle unike
+    const dependencies = []
     job.tasks.forEach((task) => {
       // If the task should be processed by E18, but no data has been provided
-      if(job.e18 !== false && !task.data) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
+      if (job.e18 !== false && !task.data) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
       // Make dependencyTag checks
-      if(task.dependencyTag) {
+      if (task.dependencyTag) {
         // Task cannot have dependency tag when there is only a single task
-        if(job.tasks.length === 1) throw new HTTPError(400, 'DependencyTag cannot be set when there is only a single task');
+        if (job.tasks.length === 1) throw new HTTPError(400, 'DependencyTag cannot be set when there is only a single task');
         // Task cannot be dependent on it self
-        if(task.dependencies && task.dependencies.includes(task.dependencyTag)) throw new HTTPError(400, 'Task cannot have it self as a dependency');
+        if (task.dependencies && task.dependencies.includes(task.dependencyTag)) throw new HTTPError(400, 'Task cannot have it self as a dependency');
         // Add the dependencyTag to the dependencyTagsArray if not already present
         if (!dependencyTags.includes(task.dependencyTag)) dependencyTags.push(task.dependencyTag)
       }
       // Make dependencies check
-      if(task.dependencies) {
+      if (task.dependencies) {
         // If task has dependencies, but there are no other tasks
-        if(job.tasks.length === 1) throw new HTTPError(400, 'Task cannot have dependencies when there are no other tasks');
+        if (job.tasks.length === 1) throw new HTTPError(400, 'Task cannot have dependencies when there are no other tasks');
         // Check if there are more dependencies than there are tasks
-        if(task.dependencies.length > job.tasks.length) throw new HTTPError(400, 'There cannot be more dependencies than there are tasks');
+        if (task.dependencies.length > job.tasks.length) throw new HTTPError(400, 'There cannot be more dependencies than there are tasks');
         // Add any dependencies to the array that have not been previously added
         task.dependencies.forEach((d) => {
-          if(!dependencies.includes(d)) dependencies.push(d);
+          if (!dependencies.includes(d)) dependencies.push(d);
         })
       }
-      
+
       // Add tasktype to taskTypes if not previously found
       if (!taskTypes.includes(task.type)) taskTypes.push(task.type)
       // else throw new HTTPError(400, 'task type cannot be added more than once: ' + task.type)
@@ -67,19 +66,19 @@ router.post('/', async (req, res, next) => {
     // Make sure that all the specified dependecytags has been used by the dependencies
     if (dependencyTags.length > 0) {
       dependencyTags.forEach((tag) => {
-        let match = dependencies.find((d) => dependencyTags.includes(d));
-        if(!match) throw new HTTPError(400, `The dependency tags ${tag} is set but not used`)
+        const match = dependencies.find((d) => dependencyTags.includes(d));
+        if (!match) throw new HTTPError(400, `The dependency tags ${tag} is set but not used`)
       })
     }
 
     // Make sure that all dependencies has a correlating tag
     if (dependencies.length > 0) {
       dependencies.forEach((dependency) => {
-        let match = dependencyTags.find((t) => dependencies.includes(t));
-        if(!match) throw new HTTPError(400, `The dependency ${dependency} is used, but has not been set`)
+        const match = dependencyTags.find((t) => dependencies.includes(t));
+        if (!match) throw new HTTPError(400, `The dependency ${dependency} is used, but has not been set`)
       })
     }
-    
+
     // Create and return the job
     res.body = await Job.create(job)
     next()
@@ -92,9 +91,9 @@ router.post('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
     let result = await Job.findById(req.params.id);
-    if(!result) result = await Statistics.findById(req.params.id);
+    if (!result) result = await Statistics.findById(req.params.id);
 
-    if(!result) throw new HTTPError(404, 'Job not found in queue or statistics');
+    if (!result) throw new HTTPError(404, 'Job not found in queue or statistics');
 
     res.body = result;
     next()
@@ -108,6 +107,27 @@ router.get('/:id/tasks', async (req, res, next) => {
   try {
     const job = await Job.findById(req.params.id)
     res.body = job.tasks
+    next()
+  } catch (err) {
+    return next(err)
+  }
+})
+
+// Post a new task to the job
+router.post('/:id/tasks', async (req, res, next) => {
+  try {
+    // Find the job
+    const job = await Job.findById(req.params.id);
+    if (!job) throw new HTTPError(404, `The job with id ${req.params.id} was not found`);
+    // Validation
+    if (job.e18 !== false && !req.body.data) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
+
+    // Push and save the task
+    job.tasks.push(req.body);
+    const updated = await job.save();
+
+    // Return the saved task
+    res.body = updated.tasks[updated.tasks.length - 1];
     next()
   } catch (err) {
     return next(err)
