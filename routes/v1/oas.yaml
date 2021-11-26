@@ -577,6 +577,10 @@ components:
           type: number
           description: The project id this job relates to
           minimum: 0
+        e18:
+          type: boolean
+          description: Should the job be processed
+          default: true
         parallel:
           type: boolean
           description: Should the tasks run in parallel?
@@ -615,10 +619,6 @@ components:
       properties:
         _id:
           $ref: '#/components/schemas/MongoDBId'
-        jobId:
-          description: The id of the job the task belongs to
-          allOf:
-            - $ref: '#/components/schemas/MongoDBId'
         system:
           $ref: '#/components/schemas/TaskSystems'
         method:
