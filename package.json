@@ -51,5 +51,10 @@
     "ignore": [
       "tests/dev.js"
     ]
+  },
+  "config": {
+    "mongodbMemoryServer": {
+      "version": "4.2.6"
+    }
   }
 }

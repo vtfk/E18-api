@@ -16,6 +16,7 @@ pids
 *.pid.lock
 
 # Environment files
+env.development
 *.env.development
 *.env.production
 

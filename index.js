@@ -3,7 +3,6 @@
 */
 const http = require('http');
 const { app, db, oasDocumentationEndpoints } = require('./app');
-require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` }) // Load different .env files based on NODE_ENV
 const config = require('./config') // Loads the config
 
 /*
