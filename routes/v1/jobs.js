@@ -52,6 +52,31 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
+// Marks a job as completed, this only works for E18 = false jobs
+router.put('/:id/complete', async (req, res, next) => {
+  try {
+    // Find the job by id and task id
+    const job = await Job.findById(req.params.id);
+
+    // Validate the job
+    if (!job) throw new HTTPError(404, `Job with the taskId "${req.params.taskid}" could not be found`)
+    if (job.e18 !== false) throw new HTTPError(404, 'You are not allowed to complete a job handled by E18')
+    if (job.status === 'completed') return job;
+
+    // Set the status as completed
+    job.status = 'completed';
+
+    // Save the change
+    res.body = job.save();
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+})
+
+/*
+  Tasks
+*/
 // Get all tasks
 router.get('/:id/tasks', async (req, res, next) => {
   try {
@@ -70,7 +95,7 @@ router.post('/:id/tasks', async (req, res, next) => {
     let job = await Job.findById(req.params.id);
     if (!job) throw new HTTPError(404, `The job with id ${req.params.id} was not found`);
     // Validation
-    if (job.e18 !== false && !req.body.data) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
+    if (job.e18 !== false) throw new HTTPError(400, 'You can only post additional task to jobs not handled by E18');
 
     // Push and save the task
     job.tasks.push(req.body);

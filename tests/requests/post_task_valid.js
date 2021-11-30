@@ -1,7 +1,7 @@
 module.exports = [
   {
     description: 'Task that E18 should process',
-    e18: true,
+    e18: false,
     data: {
       system: 'svarut',
       method: 'letter',

@@ -56,7 +56,7 @@ describe('Test all jobs endpoint', () => {
   })
 
   describe('GET: api/v1/jobs', () => {
-    test('Get the two posted jobs', async () => {
+    test('Get the posted jobs', async () => {
       const response = await request(app).get('/api/v1/jobs').set(headers).send();
       jobs = response.body.data;
       expect(response.status).toBe(200);
@@ -77,6 +77,7 @@ describe('POST: api/v1/jobs/tasks', () => {
     test(example.description, async () => {
       const e18Job = jobs.find((j) => j.e18 === example.e18);
       const response = await request(app).post(`/api/v1/jobs/${e18Job._id}/tasks`).set(headers).send(example.data);
+      console.log(response.body);
       expect(response.status).toBe(200);
       expect(response.body).not.toBeUndefined();
     })
