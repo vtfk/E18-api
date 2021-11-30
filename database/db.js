@@ -17,7 +17,8 @@ const mongooseConnectionOptions = {     // The mongoose connection options
 }
 const mongoMemoryServerOptions = {
   instance: {
-    dbName: 'E18'
+    dbName: 'E18',
+    port: 9000
   }
 }
 
@@ -37,7 +38,7 @@ async function connect () {
   connectionPromise = new Promise((resolve, reject) => { resolveConnection = resolve; rejectConnection = reject; })
 
   // If mock, spin up an instance
-  if (config.useMock && config.useMock !== false && !mongoMemoryServer) {
+  if (!config.dbConnectionString && !mongoMemoryServer) {
     console.log('ℹ️ Creating mock database')
     mongoMemoryServer = await MongoMemoryServer.create(mongoMemoryServerOptions);
     config.dbConnectionString = mongoMemoryServer.getUri() + 'E18'
