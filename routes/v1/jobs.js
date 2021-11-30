@@ -8,6 +8,8 @@ const Statistics = require('../../database/db').Statistic
 const dbTools = require('../../database/db.tools.js')
 const HTTPError = require('../../lib/vtfk-errors/httperror');
 const validateJob = require('../../database/validators/job')
+const { uploadBlob } = require('../../lib/blob-storage')
+const { ObjectID } = require('mongodb')
 
 /*
   Routes
@@ -28,6 +30,26 @@ router.post('/', async (req, res, next) => {
   try {
     // Validate and sanitize the job
     const job = validateJob(req.body);
+
+    // Move attachments to blob storage
+    if (job.e18 === true) {
+      job._id = new ObjectID()
+      for await (const task of job.tasks) {
+        if (!task.files) continue
+        
+        task._id = new ObjectID()
+        for await (const file of task.files) {
+          if (file.fileName && file.fileName.includes('/')) throw new HTTPError(500, 'Illegal character in fileName')
+
+          const result = await uploadBlob({
+            jobId: `${job._id}/${task._id}`,
+            content: file.content,
+            fileName: file.fileName || undefined
+          })
+          file.fileName = result.split('/').pop()
+        }
+      }
+    }
 
     // Create and return the job
     res.body = await Job.create(job)
@@ -102,6 +124,8 @@ router.post('/:id/tasks', async (req, res, next) => {
 
     // Validate & sanitize
     job = validateJob(job);
+
+    // TODO: sjekke om attachments er med og dytte til blob
 
     // Save changes
     const updated = await job.save();
