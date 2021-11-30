@@ -151,6 +151,32 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
+  /jobs/{id}/complete:
+    put:
+      operationId: completeJob
+      summary: Sets an self-execution job to completed
+      tags:
+        - Jobs
+      security:
+        - APIKey: []
+        - Bearer: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
   /readytasks:
     get:
       operationId: getReadyTasks
