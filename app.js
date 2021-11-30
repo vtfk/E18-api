@@ -107,6 +107,7 @@ app.all('*',
 app.use('/api/v1/jobs', require('./routes/v1/jobs'))
 app.use('/api/v1/readytasks', require('./routes/v1/readytasks'))
 app.use('/api/v1/statistics', require('./routes/v1/statistics'))
+app.use('/api/v1/apikeys', require('./routes/v1/apikeys'))
 
 /*
   Send response
