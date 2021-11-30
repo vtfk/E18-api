@@ -96,5 +96,6 @@ module.exports = {
   connect: connect,
   disconnect: disconnect,
   Job: require('./models/job.model'),
-  Statistic: require('./models/statistic.model')
+  Statistic: require('./models/statistic.model'),
+  ApiKeys: require('./models/apikeys.model')
 }
