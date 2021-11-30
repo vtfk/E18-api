@@ -28,6 +28,7 @@ const schema = new mongoose.Schema({
   retries: { type: Number, default: 0 },
   data: { type: Object },
   files: [{
+    _id: false,
     fileName: {
       type: String
     },
