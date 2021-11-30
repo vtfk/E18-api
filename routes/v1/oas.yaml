@@ -633,6 +633,10 @@ components:
         data:
           type: object
           minProperties: 1
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
         dependencyTag:
           type: string
           description: A tag that other tasks can be dependent upon
@@ -716,6 +720,19 @@ components:
           $ref: '#/components/schemas/DateTime'
         modifiedTimestamp:
           $ref: '#/components/schemas/DateTime'
+    File:
+      description: A file that the queue uploads to Azure BlobStorage
+      type: object
+      required:
+        - content
+      properties:
+        fileName:
+          type: string
+          description: The name of the file. If not specified a guid will be generated
+          example: 'abc.pdf'
+        content:
+          type: string
+          description: The files content encoded to base64
     DateTime:
       description: String in ISO 8601 format
       example: '2020-01-01T12:00:00Z'
