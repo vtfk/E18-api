@@ -33,6 +33,7 @@
     "supertest": "6.1.6"
   },
   "dependencies": {
+    "@azure/storage-blob": "12.8.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
@@ -42,6 +43,7 @@
     "passport": "^0.5.0",
     "passport-headerapikey": "^1.2.2",
     "swagger-ui-express": "^4.1.6",
+    "uuid": "8.3.2",
     "yamljs": "^0.3.0"
   },
   "standardx": {
