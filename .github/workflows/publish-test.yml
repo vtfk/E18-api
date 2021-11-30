@@ -18,6 +18,9 @@
 name: "Test: Build and deploy to Azure"
 on:
   push:
+    branches:
+      - 'main'
+      - 'test'
 env:
   AZURE_WEBAPP_NAME: test-app-e18-api       # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'            # set this to the path to your web app project, defaults to the repository root
