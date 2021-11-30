@@ -27,6 +27,11 @@ const schema = new mongoose.Schema({
   status: { type: String, enum: commonValues.statuses, default: 'waiting' },
   retries: { type: Number, default: 0 },
   data: { type: Object },
+  files: [{
+    fileName: {
+      type: String
+    },
+  }],
   dependencyTag: { type: String },
   dependencies: { type: [String] },
   operations: { type: [operation] },
