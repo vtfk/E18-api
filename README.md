@@ -88,3 +88,34 @@ try {
   }
 ]
 ```
+
+#### Delete blob
+
+**Request**
+```javascript
+const { deleteBlob } = require('./blob-storage')
+try {
+  await deleteBlob({
+    jobId: 'b7dd4943-009e-49bb-b06b-fef8aa365b02', // will be the folder in the blob container
+    fileName: 'helloworld.txt'                     // blob fileName
+  })
+} catch (error) {
+  console.log((error.details && error.details.message) || error)
+}
+```
+
+**Response**: This will not return a response but will throw an error if something fails!
+
+#### Delete all blobs from a folder
+
+**Request**
+```javascript
+const { deleteFolder } = require('./blob-storage')
+try {
+  await downloadFolder('b7dd4943-009e-49bb-b06b-fef8aa365b02') // will be the folder in the blob container
+} catch (error) {
+  console.log((error.details && error.details.message) || error)
+}
+```
+
+**Response**: This will not return a response but will throw an error if something fails!
