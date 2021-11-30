@@ -61,8 +61,8 @@ router.put('/:id/complete', async (req, res, next) => {
     // Validate the job
     if (!job) throw new HTTPError(404, `Job with the taskId "${req.params.taskid}" could not be found`)
     if (job.e18 !== false) throw new HTTPError(404, 'You are not allowed to complete a job handled by E18')
-    if (job.status === 'completed') return res.body = job;
-    
+    if (job.status === 'completed') return job;
+
     // Set the status as completed
     job.status = 'completed';
 
@@ -89,7 +89,7 @@ router.get('/:id/tasks', async (req, res, next) => {
 })
 
 // Post a new task to the job
-router.post('/:id/tasks', async (req, res, next) => {instance
+router.post('/:id/tasks', async (req, res, next) => {
   try {
     // Find the job
     let job = await Job.findById(req.params.id);
@@ -235,7 +235,6 @@ router.post('/:id/tasks/:taskid/operations', async (req, res, next) => {
     return next(err)
   }
 })
-
 
 /*
   Export the router
