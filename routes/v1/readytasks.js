@@ -4,7 +4,7 @@
 const express = require('express')
 const router = express.Router()
 const Job = require('../../database/db').Job
-const blob = require('../../lib/blob-storage');
+// const blob = require('../../lib/blob-storage');
 
 /*
   Routes
@@ -56,7 +56,7 @@ router.get('/', async (req, res, next) => {
             if (incompleteDependencies.length > 0) return
           }
         }
-        
+
         // Make a copy of the task and include
         const taskCopy = { jobId: job._id, ...task }
 
