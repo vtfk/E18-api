@@ -39,7 +39,7 @@ router.post('/', async (req, res, next) => {
 // GET apikey by id
 router.get('/:id', async (req, res, next) => {
   try {
-    let result = await ApiKeys.findById(req.params.id);
+    const result = await ApiKeys.findById(req.params.id);
 
     if (!result) throw new HTTPError(404, 'ApiKey not found in the database');
 
@@ -56,11 +56,11 @@ router.delete('/:id', async (req, res, next) => {
     console.log(req.params.id)
     if (!req.params.id) throw new HTTPError(404, 'ApiKey not found in the database, cannot delete something that is not found');
 
-    let result = await ApiKeys.findByIdAndDelete(req.params.id);
+    const result = await ApiKeys.findByIdAndDelete(req.params.id);
 
-    if (result){
+    if (result) {
       console.log(`API-Key with the ID - ${req.params.id} is deleted.`)
-    } 
+    }
 
     res.body = result;
     next()
