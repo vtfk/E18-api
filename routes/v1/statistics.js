@@ -3,10 +3,12 @@
 */
 const express = require('express')
 const router = express.Router()
+const HTTPError = require('../../lib/vtfk-errors/httperror')
 const dbTools = require('../../database/db.tools');
 const Statistics = require('../../database/db').Statistic
 const Jobs = require('../../database/db').Job
 const vtfkutils = require('../../lib/vtfk-utilities/vtfk-utilities')
+const { deleteFolder } = require('../../lib/blob-storage')
 
 /*
   Routes
@@ -36,6 +38,18 @@ router.post('/maintain', async (req, res, next) => {
       // Make a copy of the job and strip
       let copy = JSON.parse(JSON.stringify(job))
       copy = vtfkutils.removeKeys(copy, ['data'])
+
+      // Remove files
+      if (copy.e18 === true) {
+        const hasFiles = copy.tasks.filter(task => Array.isArray(task.files) && task.files.length)
+        if (hasFiles) {
+          try {
+            await deleteFolder(copy._id)
+          } catch (error) {
+            throw new HTTPError(500, 'Failed to remove files from blob storage')
+          }
+        }
+      }
 
       // Create statistics entry
       await Statistics.create(copy)
