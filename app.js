@@ -52,6 +52,9 @@ if (routeChildren && Array.isArray(routeChildren)) {
       const oasDocEndpoint = '/api/' + routeChildren[i] + '/docs'
       oasDocumentationEndpoints.push(oasDocEndpoint)
 
+      // Host the spesification file
+      app.use(oasDocEndpoint + '/oas.yaml', express.static(oasSpecPath))
+
       // Host the documentation
       app.use(oasDocEndpoint, swaggerUi.serve, swaggerUi.setup(oasJSON, swaggerUIOptions))
 

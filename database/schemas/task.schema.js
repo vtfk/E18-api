@@ -31,7 +31,7 @@ const schema = new mongoose.Schema({
     _id: false,
     fileName: {
       type: String
-    },
+    }
   }],
   dependencyTag: { type: String },
   dependencies: { type: [String] },
