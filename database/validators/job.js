@@ -21,7 +21,7 @@ function validate (job) {
     if (!Array.isArray(job.tasks) || job.tasks.length === 0) throw new HTTPError(400, 'tasks cannot be empty when e18 is true');
     job.tasks.forEach((task) => {
       // If the task should be processed by E18, but no data has been provided
-      if (!task.data) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
+      if (!task.data || typeof task.data !== 'object' || Object.keys(task.data).length <= 0) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
       // Make dependencyTag checks
       if (task.dependencyTag) {
         // Task cannot have dependency tag when there is only a single task

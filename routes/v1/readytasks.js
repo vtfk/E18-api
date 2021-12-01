@@ -4,6 +4,7 @@
 const express = require('express')
 const router = express.Router()
 const Job = require('../../database/db').Job
+const blob = require('../../lib/blob-storage');
 
 /*
   Routes
@@ -18,6 +19,7 @@ router.get('/', async (req, res, next) => {
     if (req.query.type) {
       jobs = await Job.find({
         status: { $ne: 'completed' },
+        e18: true,
         $and: [
           { 'tasks.status': { $ne: 'completed' } },
           { 'tasks.type': req.query.type }
@@ -26,6 +28,7 @@ router.get('/', async (req, res, next) => {
     } else {
       jobs = await Job.find({
         status: { $ne: 'completed' },
+        e18: true,
         'tasks.status': { $ne: 'competed' }
       }).lean()
     }
@@ -53,15 +56,24 @@ router.get('/', async (req, res, next) => {
             if (incompleteDependencies.length > 0) return
           }
         }
-
+        
+        // Make a copy of the task and include
         const taskCopy = { jobId: job._id, ...task }
-        if (req.query.type) {
-          if (req.query.type === task.type) {
-            readyTasks.push({
-              ...taskCopy,
-              collectedData
-            })
-          }
+
+        // Download files if applicable
+        // if(task.files && Array.isArray(task.files) && task.files.length > 0) {
+        //   let files = [];
+        //   task.files.forEach((file) => {
+        //     files.push(blob.downloadBlob({jobId: job._id, taskId: task._id, fileName: file.fileName }));
+        //   })
+        //   taskCopy.files = files;
+        // }
+
+        if (req.query.type && req.query.type === task.type) {
+          readyTasks.push({
+            ...taskCopy,
+            collectedData
+          })
         } else {
           readyTasks.push({
             ...taskCopy,
