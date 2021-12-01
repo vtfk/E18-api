@@ -10,6 +10,7 @@ const HTTPError = require('../../lib/vtfk-errors/httperror');
 const validateJob = require('../../database/validators/job')
 const { uploadBlob } = require('../../lib/blob-storage')
 const { ObjectID } = require('mongodb')
+const merge = require('lodash.merge');
 
 /*
   Routes
@@ -192,9 +193,16 @@ router.put('/:id/tasks/:taskid/checkout', async (req, res, next) => {
     job.save()
 
     // Create the response object
+    const data = merge(collectedData, task.data);
+    const orchestratorRequest = {
+      jobId: job._id,
+      taskId: task._id,
+      ...data
+    }
     const reponse = {
       ...JSON.parse(JSON.stringify(job.tasks[taskIndex])),
-      collectedData: collectedData
+      collectedData: collectedData,
+      request: orchestratorRequest
     }
 
     // Set the return value and continue

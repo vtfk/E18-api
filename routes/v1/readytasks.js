@@ -4,6 +4,7 @@
 const express = require('express')
 const router = express.Router()
 const Job = require('../../database/db').Job
+const merge = require('lodash.merge');
 // const blob = require('../../lib/blob-storage');
 
 /*
@@ -68,16 +69,23 @@ router.get('/', async (req, res, next) => {
         //   })
         //   taskCopy.files = files;
         // }
-
+        const data = merge(collectedData, task.data);
+        const orchestratorRequest = {
+          jobId: job._id,
+          taskId: task._id,
+          ...data
+        }
         if (req.query.type && req.query.type === task.type) {
           readyTasks.push({
             ...taskCopy,
-            collectedData
+            data,
+            request: orchestratorRequest
           })
         } else {
           readyTasks.push({
             ...taskCopy,
-            collectedData
+            data,
+            request: orchestratorRequest
           })
         }
       })
