@@ -35,7 +35,7 @@ router.get('/', async (req, res, next) => {
     }
 
     // Just make double sure that the jobs are actually not completed
-    jobs = jobs.filter((j) => j.status !== 'completed')
+    jobs = jobs.filter((j) => j.status !== 'completed' || j.status !== 'retired' || j.status !== 'suspended')
 
     if (!jobs || jobs.length === 0) {
       res.body = [];

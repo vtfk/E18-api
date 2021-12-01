@@ -633,6 +633,7 @@ components:
       enum:
         - waiting
         - running
+        - retired
         - suspended
         - completed
         - failed

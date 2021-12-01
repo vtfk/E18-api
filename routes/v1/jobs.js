@@ -148,6 +148,8 @@ router.put('/:id/tasks/:taskid/checkout', async (req, res, next) => {
     // Validate the job
     if (!job) throw new HTTPError(404, `Job with the taskId "${req.params.taskid}" could not be found`)
     if (job.status === 'completed') throw new HTTPError(400, 'Cannot checkout a task from a job that is completed')
+    if (job.status === 'suspended') throw new HTTPError(400, 'Cannot checkout a task from a job that is suspended')
+    if (job.status === 'retired') throw new HTTPError(400, 'Cannot checkout a task from a job that is retired')
 
     // Get the task
     const taskIndex = job.tasks.findIndex((t) => t._id.toString() === req.params.taskid.toString())
@@ -247,6 +249,8 @@ router.post('/:id/tasks/:taskid/operations', async (req, res, next) => {
     // Validate the job
     if (!job) throw new HTTPError(404, `Job with the taskId "${req.params.taskid}" could not be found`)
     if (job.status === 'completed') throw new HTTPError(400, 'Cannot post operations to a completed task')
+    if (job.status === 'suspended') throw new HTTPError(400, 'Cannot checkout a task from a job that is suspended')
+    if (job.status === 'retired') throw new HTTPError(400, 'Cannot checkout a task from a job that is retired')
 
     // Get the task and push the operation to the array
     const taskIndex = job.tasks.findIndex((t) => t._id.toString() === req.params.taskid.toString())
