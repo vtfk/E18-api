@@ -22,7 +22,7 @@ module.exports = new HeaderAPIKeyStrategy(
   },
   false,
   async (apikey, done) => {
-    // TODO generer en nøkkel, hash og salt. 
+    // TODO generer en nøkkel, hash og salt.
     return done(null, 'test')
     // If the key was not found
     // if (!isKeyFound) {
