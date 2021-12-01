@@ -8,7 +8,7 @@ const Statistics = require('../../database/db').Statistic
 const dbTools = require('../../database/db.tools.js')
 const HTTPError = require('../../lib/vtfk-errors/httperror');
 const validateJob = require('../../database/validators/job')
-const { uploadBlob } = require('../../lib/blob-storage')
+const { uploadBlob, downloadBlob } = require('../../lib/blob-storage')
 const { ObjectID } = require('mongodb')
 const merge = require('lodash.merge');
 
@@ -151,7 +151,7 @@ router.put('/:id/tasks/:taskid/checkout', async (req, res, next) => {
 
     // Get the task
     const taskIndex = job.tasks.findIndex((t) => t._id.toString() === req.params.taskid.toString())
-    const task = job.tasks[taskIndex] // Just use this for reading values, writes to this will not be saved. Use job.tasks[taskIndex] instead
+    let task = JSON.parse(JSON.stringify(job.tasks[taskIndex])) // Just use this for reading values, writes to this will not be saved. Use job.tasks[taskIndex] instead
 
     // Check if the task is unavailable to checkout
     switch (task.status) {
@@ -159,6 +159,8 @@ router.put('/:id/tasks/:taskid/checkout', async (req, res, next) => {
         throw new HTTPError(400, 'Already running')
       case 'completed':
         throw new HTTPError(400, 'Already completed')
+      case 'retired':
+        throw new HTTPError(400, 'The task is retired')
       case 'failed':
         job.tasks[taskIndex].retries += 1
     }
@@ -192,15 +194,35 @@ router.put('/:id/tasks/:taskid/checkout', async (req, res, next) => {
     job.status = 'running'
     job.save()
 
-    // Create the response object
+    // Merge the collectedData and task data
     const data = merge(collectedData, task.data);
+
+    // Make a new copy of the task again
+    task = JSON.parse(JSON.stringify(job.tasks[taskIndex]));
+
+    // Download any files if applicable
+    if (task.files && Array.isArray(task.files) && task.files.length > 0) {
+      const files = [];
+      for (const file of task.files) {
+        const f = await downloadBlob({ jobId: job._id, taskId: task._id, fileName: file.fileName });
+        files.push(f);
+      }
+      if (files.length > 0) task.files = files;
+    }
+
+    // Create a QOL request object for the orchestrator to use
     const orchestratorRequest = {
       jobId: job._id,
       taskId: task._id,
       ...data
     }
+    if (task.files) {
+      orchestratorRequest.files = task.files;
+    }
+
+    // Create the response object
     const reponse = {
-      ...JSON.parse(JSON.stringify(job.tasks[taskIndex])),
+      ...task,
       collectedData: collectedData,
       request: orchestratorRequest
     }
@@ -224,7 +246,7 @@ router.post('/:id/tasks/:taskid/operations', async (req, res, next) => {
 
     // Validate the job
     if (!job) throw new HTTPError(404, `Job with the taskId "${req.params.taskid}" could not be found`)
-    if (job.status === 'completed') throw new HTTPError(400, 'Cannot checkout a task from a job that is completed')
+    if (job.status === 'completed') throw new HTTPError(400, 'Cannot post operations to a completed task')
 
     // Get the task and push the operation to the array
     const taskIndex = job.tasks.findIndex((t) => t._id.toString() === req.params.taskid.toString())
