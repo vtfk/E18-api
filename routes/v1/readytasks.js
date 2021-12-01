@@ -22,12 +22,12 @@ router.get('/', async (req, res, next) => {
           { 'tasks.status': { $ne: 'completed' } },
           { 'tasks.type': req.query.type }
         ]
-      })
+      }).lean()
     } else {
       jobs = await Job.find({
         status: { $ne: 'completed' },
         'tasks.status': { $ne: 'competed' }
-      })
+      }).lean()
     }
 
     // Just make double sure that the jobs are actually not completed
@@ -36,6 +36,7 @@ router.get('/', async (req, res, next) => {
     // Determine if the tasks in the job matches the criteria to be checked out
     jobs.forEach((job) => {
       const collectedData = {}
+      if (!job.tasks) return
       job.tasks.forEach((task, i) => {
         if (task.status === 'completed') {
           collectedData[task.type] = task.operations.find((o) => o.status === 'completed').data
@@ -53,16 +54,17 @@ router.get('/', async (req, res, next) => {
           }
         }
 
+        const taskCopy = { jobId: job._id, ...task }
         if (req.query.type) {
           if (req.query.type === task.type) {
             readyTasks.push({
-              ...JSON.parse(JSON.stringify(task)),
+              ...taskCopy,
               collectedData
             })
           }
         } else {
           readyTasks.push({
-            ...JSON.parse(JSON.stringify(task)),
+            ...taskCopy,
             collectedData
           })
         }
