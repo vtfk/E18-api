@@ -35,11 +35,12 @@ router.post('/', async (req, res, next) => {
     const apikey = validateAPIKey(req.body);
     console.log('=== API KEY HASHED IN POST ENDPOINT ===')
     /*
-      Generate UUID 
+      Generate UUID
     */
-    function uuidv4() {
+    function uuidv4 () {
       const crypto = require('crypto');
-      return uuid = crypto.randomUUID()
+      const uuid = crypto.randomUUID()
+      return uuid
     }
     /*
       Define the API-Key with the UUID
@@ -48,8 +49,8 @@ router.post('/', async (req, res, next) => {
     console.log('=== APIKEY from UUIDV4 ===')
     console.log(plainAPIKey);
 
-    // Hash the api key 
-    const hash = crypto.createHash('sha512').update(plainAPIKey).digest("hex")
+    // Hash the api key
+    const hash = crypto.createHash('sha512').update(plainAPIKey).digest('hex')
 
     console.log(hash)
 
@@ -57,7 +58,9 @@ router.post('/', async (req, res, next) => {
     // Create and return the apikey
     res.body = await ApiKeys.create(apikey)
     next()
-    // TODO Return the name and apikey to the user.  
+    // TODO Return the name and apikey to the user.
+    console.log('Name: ' + res.body.name)
+    console.log('Api-key: ' + plainAPIKey)
   } catch (err) {
     return next(err)
   }
