@@ -8,10 +8,7 @@ const mongoose = require('mongoose')
 */
 const schema = new mongoose.Schema({
   name: { type: String, required: true, minlength: 5, maxlength: 25 },
-<<<<<<< HEAD
   hash: { type: String, required: true },
-=======
->>>>>>> main
   enabled: { type: Boolean },
   createdTimeStamp: { type: Date, default: new Date().toISOString() },
   modifiedTimeStamp: { type: Date, default: new Date().toISOString() }
