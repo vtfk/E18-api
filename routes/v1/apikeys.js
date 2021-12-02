@@ -32,7 +32,7 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     // Validate and sanitize the apikey
-    const apikey = validateAPIKey(req.body);
+    const apikey = await validateAPIKey(req.body);
     console.log('=== API KEY HASHED IN POST ENDPOINT ===')
     /*
       Generate UUID
