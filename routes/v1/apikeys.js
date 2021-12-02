@@ -54,13 +54,12 @@ router.post('/', async (req, res, next) => {
 
     console.log(hash)
 
+    // Return the name and apikey to the user.
+    res.send('APIKey Name: ' + apikey.name + '\n' + 'APIKey: ' + plainAPIKey)
+
     req.body.hash = hash
     // Create and return the apikey
     res.body = await ApiKeys.create(apikey)
-    next()
-    // TODO Return the name and apikey to the user.
-    console.log('Name: ' + res.body.name)
-    console.log('Api-key: ' + plainAPIKey)
   } catch (err) {
     return next(err)
   }
