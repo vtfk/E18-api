@@ -9,7 +9,6 @@ const HTTPError = require('../../lib/vtfk-errors/httperror');
  * @returns
  */
 function validate (apikey) {
-  // Variables
   // Validate the name
   if (!apikey.name) throw new HTTPError(400, 'name cannot be empty')
   // TODO Check for unique names?
