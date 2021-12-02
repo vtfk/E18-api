@@ -36,7 +36,7 @@ router.post('/', async (req, res, next) => {
       job._id = new ObjectID()
       for await (const task of job.tasks) {
         if (!task.files) continue
-        
+
         task._id = new ObjectID()
         for await (const file of task.files) {
           if (file.fileName && file.fileName.includes('/')) throw new HTTPError(500, 'Illegal character in fileName')

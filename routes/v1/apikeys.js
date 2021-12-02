@@ -7,6 +7,12 @@ const ApiKeys = require('../../database/db').ApiKeys
 const dbTools = require('../../database/db.tools.js')
 const HTTPError = require('../../lib/vtfk-errors/httperror');
 const validateAPIKey = require('../../database/validators/apikey')
+const crypto = require('crypto')
+
+/*
+  Define something
+*/
+let plainAPIKey = ''
 
 /*
   Routes
@@ -27,10 +33,31 @@ router.post('/', async (req, res, next) => {
   try {
     // Validate and sanitize the apikey
     const apikey = validateAPIKey(req.body);
+    console.log('=== API KEY HASHED IN POST ENDPOINT ===')
+    /*
+      Generate UUID 
+    */
+    function uuidv4() {
+      const crypto = require('crypto');
+      return uuid = crypto.randomUUID()
+    }
+    /*
+      Define the API-Key with the UUID
+    */
+    plainAPIKey = uuidv4()
+    console.log('=== APIKEY from UUIDV4 ===')
+    console.log(plainAPIKey);
 
+    // Hash the api key 
+    const hash = crypto.createHash('sha512').update(plainAPIKey).digest("hex")
+
+    console.log(hash)
+
+    req.body.hash = hash
     // Create and return the apikey
     res.body = await ApiKeys.create(apikey)
     next()
+    // TODO Return the name and apikey to the user.  
   } catch (err) {
     return next(err)
   }
@@ -39,7 +66,7 @@ router.post('/', async (req, res, next) => {
 // GET apikey by id
 router.get('/:id', async (req, res, next) => {
   try {
-    let result = await ApiKeys.findById(req.params.id);
+    const result = await ApiKeys.findById(req.params.id);
 
     if (!result) throw new HTTPError(404, 'ApiKey not found in the database');
 
@@ -56,11 +83,11 @@ router.delete('/:id', async (req, res, next) => {
     console.log(req.params.id)
     if (!req.params.id) throw new HTTPError(404, 'ApiKey not found in the database, cannot delete something that is not found');
 
-    let result = await ApiKeys.findByIdAndDelete(req.params.id);
+    const result = await ApiKeys.findByIdAndDelete(req.params.id);
 
-    if (result){
+    if (result) {
       console.log(`API-Key with the ID - ${req.params.id} is deleted.`)
-    } 
+    }
 
     res.body = result;
     next()
