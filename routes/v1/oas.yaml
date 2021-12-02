@@ -633,6 +633,7 @@ components:
       enum:
         - waiting
         - running
+        - retired
         - suspended
         - completed
         - failed
@@ -706,6 +707,7 @@ components:
           type: string
         data:
           type: object
+          minItems: 1
         createdTimestamp:
           $ref: '#/components/schemas/DateTime'
         modifiedTimestamp:

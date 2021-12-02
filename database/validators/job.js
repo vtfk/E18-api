@@ -21,7 +21,7 @@ function validate (job) {
     if (!Array.isArray(job.tasks) || job.tasks.length === 0) throw new HTTPError(400, 'tasks cannot be empty when e18 is true');
     job.tasks.forEach((task) => {
       // If the task should be processed by E18, but no data has been provided
-      if (!task.data) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
+      // if (!task.data || typeof task.data !== 'object' || Object.keys(task.data).length <= 0) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
       // Make dependencyTag checks
       if (task.dependencyTag) {
         // Task cannot have dependency tag when there is only a single task
@@ -71,11 +71,13 @@ function validate (job) {
   } else { // If E18 is explicitly set false
     // Set some default values
     job.parallel = false;
-    // Remove any dependency information from the tasks
+    // Remove any unesessary/unsupported information from the task
     if (job.tasks) {
       job.tasks.forEach((task) => {
         if (task.dependencyTag) delete task.dependencyTag;
         if (task.dependencies) delete task.dependencies;
+        if (task.data) delete task.data;
+        if (task.files) delete task.files;
       })
     }
   }
@@ -83,4 +85,19 @@ function validate (job) {
   return job;
 }
 
-module.exports = validate;
+/**
+ *
+ * @param {any} job The job object to check
+ */
+function isMissingOrLocked (id, job) {
+  const lockedStatuses = ['completed', 'retired', 'suspended']
+  if (!job) throw new HTTPError(404, `The job with id ${id} could not be found`);
+  if (!job.status) throw new HTTPError(404, `Could not determine the status of job '${id}'`);
+  const match = lockedStatuses.find((i) => i === job.status);
+  if (match) throw new HTTPError(404, `The job is locked with status'${match}'`);
+}
+
+module.exports = {
+  validate,
+  isMissingOrLocked
+}
