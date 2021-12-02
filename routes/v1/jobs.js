@@ -7,7 +7,8 @@ const Job = require('../../database/db').Job
 const Statistics = require('../../database/db').Statistic
 const dbTools = require('../../database/db.tools.js')
 const HTTPError = require('../../lib/vtfk-errors/httperror');
-const validateJob = require('../../database/validators/job')
+const validateJob = require('../../database/validators/job').validate;
+const isJobMissingOrLocked = require('../../database/validators/job').isMissingOrLocked;
 const { uploadBlob, downloadBlob } = require('../../lib/blob-storage')
 const { ObjectID } = require('mongodb')
 const merge = require('lodash.merge');
@@ -31,10 +32,10 @@ router.post('/', async (req, res, next) => {
   try {
     // Validate and sanitize the job
     const job = validateJob(req.body);
+    job._id = new ObjectID()
 
     // Move attachments to blob storage
     if (job.e18 === true) {
-      job._id = new ObjectID()
       for await (const task of job.tasks) {
         if (!task.files) continue
 
@@ -43,9 +44,10 @@ router.post('/', async (req, res, next) => {
           if (file.fileName && file.fileName.includes('/')) throw new HTTPError(500, 'Illegal character in fileName')
 
           const result = await uploadBlob({
-            jobId: `${job._id}/${task._id}`,
-            content: file.content,
-            fileName: file.fileName || undefined
+            jobId: job._id,
+            taskId: task._id,
+            fileName: file.fileName || undefined,
+            content: file.content
           })
           file.fileName = result.split('/').pop()
         }
@@ -116,17 +118,20 @@ router.post('/:id/tasks', async (req, res, next) => {
   try {
     // Find the job
     let job = await Job.findById(req.params.id);
-    if (!job) throw new HTTPError(404, `The job with id ${req.params.id} was not found`);
+
     // Validation
+    isJobMissingOrLocked(req.params.id, job);
     if (job.e18 !== false) throw new HTTPError(400, 'You can only post additional task to jobs not handled by E18');
+
+    // Create a task object
+    const task = req.body;
+    task._id = new ObjectID();
 
     // Push and save the task
     job.tasks.push(req.body);
 
     // Validate & sanitize
     job = validateJob(job);
-
-    // TODO: sjekke om attachments er med og dytte til blob
 
     // Save changes
     const updated = await job.save();
@@ -146,8 +151,7 @@ router.put('/:id/tasks/:taskid/checkout', async (req, res, next) => {
     const job = await Job.findOne({ _id: req.params.id, 'tasks._id': req.params.taskid })
 
     // Validate the job
-    if (!job) throw new HTTPError(404, `Job with the taskId "${req.params.taskid}" could not be found`)
-    if (job.status === 'completed') throw new HTTPError(400, 'Cannot checkout a task from a job that is completed')
+    isJobMissingOrLocked(req.params.id, job);
 
     // Get the task
     const taskIndex = job.tasks.findIndex((t) => t._id.toString() === req.params.taskid.toString())
@@ -245,8 +249,7 @@ router.post('/:id/tasks/:taskid/operations', async (req, res, next) => {
     const job = await Job.findOne({ _id: req.params.id, 'tasks._id': req.params.taskid })
 
     // Validate the job
-    if (!job) throw new HTTPError(404, `Job with the taskId "${req.params.taskid}" could not be found`)
-    if (job.status === 'completed') throw new HTTPError(400, 'Cannot post operations to a completed task')
+    isJobMissingOrLocked(req.params.id, job);
 
     // Get the task and push the operation to the array
     const taskIndex = job.tasks.findIndex((t) => t._id.toString() === req.params.taskid.toString())
