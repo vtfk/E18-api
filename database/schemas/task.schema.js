@@ -10,7 +10,7 @@ const commonValues = require('../common')
 */
 const operation = new mongoose.Schema({
   status: { type: String, enum: commonSchemasValues.operationStatuses, required: true },
-  message: { type: String, required: true },
+  message: { type: String },
   createdTimestamp: { type: Date, default: new Date() },
   trackingId: { type: String },
   data: { type: Object },
@@ -26,6 +26,7 @@ const schema = new mongoose.Schema({
   status: { type: String, enum: commonValues.statuses, default: 'waiting' },
   retries: { type: Number, default: 0 },
   data: { type: Object },
+  fileCount: { type: Number },
   files: [{
     _id: false,
     fileName: {
