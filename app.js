@@ -70,9 +70,14 @@ if (routeChildren && Array.isArray(routeChildren)) {
 }
 
 /*
-  Validate that the database is connected
+  Validate that the route exists and that the database is connected
 */
 app.use('*', (req, res, next) => {
+  // Validate that the route is specified in the spec
+  if (!req.openapi) {
+    next(new HTTPError(404, `The route ${req.originalUrl} does not exist`))
+  }
+  // Validate that the database is connected
   if (db.client.connection.readyState !== 1) {
     next({
       status: 500,
@@ -88,6 +93,7 @@ app.use('*', (req, res, next) => {
 */
 const passport = require('passport') // Engine for authenticating using different strategies
 const headerAPIKeyStrategy = require('./auth/authentication/apikey') // Passport strategy for authenticating with APIKey
+const HTTPError = require('./lib/vtfk-errors/httperror')
 // Register strategies
 passport.use(headerAPIKeyStrategy)
 // Initialize passport
