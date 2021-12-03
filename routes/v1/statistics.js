@@ -41,8 +41,16 @@ router.post('/maintain', async (req, res, next) => {
 
       // Remove files
       if (copy.e18 === true) {
-        const hasFiles = copy.tasks.filter(task => Array.isArray(task.files) && task.files.length)
-        if (hasFiles) {
+        // Get any tasks with files
+        const tasksWithFiles = copy.tasks.filter(task => Array.isArray(task.files) && task.files.length);
+
+        // Remove the files and replace then with a filecount instead
+        // for(let task in tasksWithFiles) {
+        //   task.fileCount = task.files.length;
+        //   delete task.files;
+        // }
+
+        if (tasksWithFiles) {
           try {
             await deleteFolder(copy._id)
           } catch (error) {
