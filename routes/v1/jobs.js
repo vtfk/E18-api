@@ -264,6 +264,7 @@ router.post('/:id/tasks/:taskid/operations', async (req, res, next) => {
         break
       case 'failed':
         job.tasks[taskIndex].status = 'failed'
+        job.status = 'failed';
         break
     }
 
