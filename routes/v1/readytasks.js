@@ -5,7 +5,6 @@ const express = require('express')
 const router = express.Router()
 const Job = require('../../database/db').Job
 const merge = require('lodash.merge');
-const blob = require('../../lib/blob-storage');
 
 /*
   Routes
@@ -71,23 +70,12 @@ router.get('/', async (req, res, next) => {
         // Make a merged object with collectedData and task data
         const data = merge(collectedData, task.data);
 
-        // Download files if applicable
-        if (task.files && Array.isArray(task.files) && task.files.length > 0) {
-          const files = [];
-          for (const file of task.files) {
-            const f = await blob.downloadBlob({ jobId: job._id, taskId: task._id, fileName: file.fileName });
-            files.push(f);
-          }
-          taskCopy.files = files;
-        }
-
         // Create an request object for the orchestrator to use, this is only for QOL as we do not need to build this in the LogicApp
         const orchestratorRequest = {
           jobId: job._id,
           taskId: task._id,
           ...data
         }
-        if (taskCopy.files) orchestratorRequest.files = taskCopy.files;
 
         // Add to the readyTasks array
         if (req.query.type && req.query.type === task.type) {

@@ -9,10 +9,9 @@ const commonValues = require('../common')
   Sub schema
 */
 const operation = new mongoose.Schema({
-  status: { type: String, enum: commonSchemasValues.operationStatuses },
-  message: { type: String },
-  createdTimestamp: { type: Date },
-  modifiedTimestamp: { type: Date },
+  status: { type: String, enum: commonSchemasValues.operationStatuses, required: true },
+  message: { type: String, required: true },
+  createdTimestamp: { type: Date, default: new Date() },
   trackingId: { type: String },
   data: { type: Object },
   error: { type: Object }
@@ -36,7 +35,7 @@ const schema = new mongoose.Schema({
   dependencyTag: { type: String },
   dependencies: { type: [String] },
   operations: { type: [operation] },
-  createdTimestamp: { type: Date },
+  createdTimestamp: { type: Date, default: new Date() },
   modifiedTimestamp: { type: Date }
 })
 
