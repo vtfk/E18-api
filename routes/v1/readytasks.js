@@ -55,7 +55,10 @@ router.get('/', async (req, res, next) => {
           continue
         } else if (!job.parallel && taskIndex !== 0 && job.tasks[taskIndex - 1].status !== 'completed') {
           continue
+        } else if (task.operations.filter((o) => o.status === 'failed').length >= 3) {
+          continue;
         }
+
         // If paralell exectuion, check if there are uncompleted dependencies
         if (job.parallel) {
           if (task.dependencies && Array.isArray(task.dependencies) && task.dependencies.length > 0) {
