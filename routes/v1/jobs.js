@@ -37,7 +37,8 @@ router.post('/', async (req, res, next) => {
     // Move attachments to blob storage
     if (job.e18 === true) {
       for await (const task of job.tasks) {
-        if (!task.files) continue
+        if (!task.files || !Array.isArray(task.files)) continue
+        task.fileCount = task.files.length;
 
         task._id = new ObjectID()
         for await (const file of task.files) {

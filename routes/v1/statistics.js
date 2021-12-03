@@ -37,7 +37,7 @@ router.post('/maintain', async (req, res, next) => {
 
       // Make a copy of the job and strip
       let copy = JSON.parse(JSON.stringify(job))
-      copy = vtfkutils.removeKeys(copy, ['data'])
+      copy = vtfkutils.removeKeys(copy, ['data', 'error'])
 
       // Remove files
       if (copy.e18 === true) {
@@ -45,10 +45,9 @@ router.post('/maintain', async (req, res, next) => {
         const tasksWithFiles = copy.tasks.filter(task => Array.isArray(task.files) && task.files.length);
 
         // Remove the files and replace then with a filecount instead
-        // for(let task in tasksWithFiles) {
-        //   task.fileCount = task.files.length;
-        //   delete task.files;
-        // }
+        for (const task of tasksWithFiles) {
+          delete task.files;
+        }
 
         if (tasksWithFiles) {
           try {
@@ -58,6 +57,9 @@ router.post('/maintain', async (req, res, next) => {
           }
         }
       }
+
+      console.log('== Moving to statistics ==');
+      vtfkutils.inspect(copy);
 
       // Create statistics entry
       await Statistics.create(copy)

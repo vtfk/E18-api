@@ -2,27 +2,12 @@
   Import dependencies
 */
 const mongoose = require('mongoose')
-const taskSchema = require('../schemas/task-statistic.schema')
-const commonValues = require('../common')
+const jobSchema = require('../schemas/job.schema');
 
-/*
-  Schema definition
-*/
-const schema = new mongoose.Schema({
-  jobId: { type: mongoose.SchemaTypes.ObjectId },
-  system: { type: String, required: true },
-  type: { type: String },
-  projectId: { type: Number, required: true },
-  status: { type: String, enum: commonValues.statuses, default: 'waiting' },
-  parallel: { type: Boolean },
-  e18: { type: Boolean },
-  retries: { type: Number, default: 0 },
-  tasks: { type: [taskSchema], required: true },
-  createdTimestamp: { type: Date, default: new Date().toISOString() },
-  modifiedTimestamp: { type: Date, default: new Date().toISOString() }
-})
+// Set the collection
+jobSchema.set('collection', 'statistics');
 
 /*
   Export model based on the schema
 */
-module.exports = mongoose.model('Statistic', schema)
+module.exports = mongoose.model('Statistic', jobSchema)

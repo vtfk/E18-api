@@ -2,19 +2,26 @@
   Import dependencies
 */
 const mongoose = require('mongoose')
-const commonSchemasValues = require('./common')
+const commonSchemaValues = require('./common')
 const commonValues = require('../common')
 
 /*
   Sub schema
 */
 const operation = new mongoose.Schema({
-  status: { type: String, enum: commonSchemasValues.operationStatuses, required: true },
+  status: { type: String, enum: commonSchemaValues.operationStatuses, required: true },
   message: { type: String },
   createdTimestamp: { type: Date, default: new Date() },
   trackingId: { type: String },
   data: { type: Object },
   error: { type: Object }
+})
+
+const file = new mongoose.Schema({
+  _id: false,
+  fileName: {
+    type: String
+  }
 })
 
 /*
@@ -27,12 +34,10 @@ const schema = new mongoose.Schema({
   retries: { type: Number, default: 0 },
   data: { type: Object },
   fileCount: { type: Number },
-  files: [{
-    _id: false,
-    fileName: {
-      type: String
-    }
-  }],
+  files: {
+    type: [file],
+    default: undefined
+  },
   dependencyTag: { type: String },
   dependencies: { type: [String] },
   operations: { type: [operation] },
