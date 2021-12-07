@@ -28,7 +28,7 @@ const file = new mongoose.Schema({
   Schema definition
 */
 const schema = new mongoose.Schema({
-  system: { type: String, enum: commonValues.taskSystems },
+  system: { type: String },
   method: { type: String },
   status: { type: String, enum: commonValues.statuses, default: 'waiting' },
   retries: { type: Number, default: 0 },
@@ -38,6 +38,9 @@ const schema = new mongoose.Schema({
     type: [file],
     default: undefined
   },
+  regarding: { type: String },
+  comment: { type: String },
+  tags: { type: [String] },
   dependencyTag: { type: String },
   dependencies: { type: [String] },
   operations: { type: [operation] },

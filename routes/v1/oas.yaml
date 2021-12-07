@@ -606,6 +606,16 @@ components:
           type: boolean
           description: Should the job be processed
           default: true
+        regarding:
+          type: string
+          description: What this job regards. Shall not contain personal information
+        comment:
+          type: string
+          description: A comment on the task, intended for commenting from the frontend
+        tags:
+          type: array
+          items:
+            type: string
         parallel:
           type: boolean
           description: Should the tasks run in parallel?
@@ -645,12 +655,22 @@ components:
         _id:
           $ref: '#/components/schemas/MongoDBId'
         system:
-          $ref: '#/components/schemas/TaskSystems'
+          type: string
         method:
           type: string
           description: The method to run for the system
         status:
           $ref: '#/components/schemas/Statuses'
+        regarding:
+          type: string
+          description: What does this task regard?
+        tags:
+          type: array
+          items:
+            type: string
+        comment:
+          type: string
+          description: A comment on the task, intended for commenting from the frontend
         retries:
           type: number
           description: The number of retries of this task
@@ -671,6 +691,7 @@ components:
           minItems: 1
           items:
             type: string
+        
         operations:
           type: array
           items:
@@ -686,10 +707,6 @@ components:
           $ref: '#/components/schemas/DateTime'
         modifiedTimestamp:
           $ref: '#/components/schemas/DateTime'
-    TaskSystems:
-      description: All allowed task types
-      type: string
-      enum: [svarut, p360]
     TaskOperationStatuses:
       type: string
       enum: [completed, failed]
