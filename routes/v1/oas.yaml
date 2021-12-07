@@ -585,7 +585,6 @@ components:
       type: object
       required:
         - system
-        - tasks
         - projectId
       properties:
         _id:
@@ -614,12 +613,11 @@ components:
         retries:
           type: number
           minimum: 0
+          default: 0
         tasks:
           type: array
-          minItems: 1
           items:
-            allOf:
-              - $ref: '#/components/schemas/Task'
+            $ref: '#/components/schemas/Task'
         createdTimestamp:
           $ref: '#/components/schemas/DateTime'
         createdBy:
