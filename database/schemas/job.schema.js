@@ -17,6 +17,9 @@ const schema = new mongoose.Schema({
   parallel: { type: Boolean, default: false },
   retries: { type: Number, default: 0 },
   tasks: { type: [taskSchema], required: true },
+  regarding: { type: String },
+  comment: { type: String },
+  tags: { type: [String] },
   createdTimestamp: { type: Date, default: new Date().toISOString() },
   modifiedTimestamp: { type: Date, default: new Date().toISOString() }
 })
