@@ -24,7 +24,6 @@ module.exports = new HeaderAPIKeyStrategy(
   },
   false,
   async (apikey, done) => {
-    console.log(apikey)
     const hash = crypto.createHash('sha512').update(apikey).digest('hex')
     const test = await ApiKeys.findOne({ hash: hash })
     if (!process.env.NODE_ENV === 'test') {

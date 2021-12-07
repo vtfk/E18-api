@@ -15,14 +15,20 @@ const headers = {
   'Content-Type': 'application/json'
 }
 
+/*
+  Functions
+*/
+function outputError (response) {
+  if (!response || !response.status || !response.body) return;
+  if (parseInt(response.status) < 299) return;
+  console.error(response.body);
+}
+
+/*
+  Run before Jest tests
+*/
 beforeAll(async (done) => {
-  // Run the api;
-  // console.log('Before all: ⏳ Waiting for database connectivity');
-  // console.log('Before all: Mongoose ready state: ' + db.client.connection.readyState);
-  // console.log('Before all: == Connection promise ==');
-  // console.log(db.connectionPromise);
   await db.connect();
-  // console.log('Should be connected now');
   done();
 });
 
@@ -37,6 +43,8 @@ describe('Test all jobs endpoint', () => {
     examples.forEach((example) => {
       test(example.description, async () => {
         const response = await request(app).post('/api/v1/jobs').set(headers).send(example.data);
+        outputError(response);
+
         expect(response.status).toBe(200);
         expect(response.body).not.toBeUndefined();
       })
@@ -59,12 +67,14 @@ describe('Test all jobs endpoint', () => {
     test('Get the posted jobs', async () => {
       const response = await request(app).get('/api/v1/jobs').set(headers).send();
       jobs = response.body.data;
+      outputError(response);
       expect(response.status).toBe(200);
       expect(jobs.length).toBe(3);
     })
 
     test('Get the first job by id', async () => {
       const response = await request(app).get('/api/v1/jobs/' + jobs[0]._id).set(headers).send();
+      outputError(response);
       expect(response.status).toBe(200);
       expect(response.body).toBeTruthy();
     })
@@ -77,7 +87,7 @@ describe('POST: api/v1/jobs/tasks', () => {
     test(example.description, async () => {
       const e18Job = jobs.find((j) => j.e18 === example.e18);
       const response = await request(app).post(`/api/v1/jobs/${e18Job._id}/tasks`).set(headers).send(example.data);
-      console.log(response.body);
+      outputError(response);
       expect(response.status).toBe(200);
       expect(response.body).not.toBeUndefined();
     })

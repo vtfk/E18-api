@@ -16,6 +16,8 @@ function validate (job) {
 
   // Checks if E18 is true
   if (job.e18 !== false) {
+    if (!job.system) throw new HTTPError(400, 'system cannot be empty when e18 is true');
+    if (job.projectId === undefined || job.projectId === null) throw new HTTPError(400, 'projectId cannot be empty when e18 is true');
     // Valiadte tasks
     if (!job.tasks) throw new HTTPError(400, 'tasks cannot be empty when e18 is true');
     if (!Array.isArray(job.tasks) || job.tasks.length === 0) throw new HTTPError(400, 'tasks cannot be empty when e18 is true');

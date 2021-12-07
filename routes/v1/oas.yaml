@@ -583,9 +583,6 @@ components:
     Job:
       description: Represents a single job
       type: object
-      required:
-        - system
-        - projectId
       properties:
         _id:
           $ref: '#/components/schemas/MongoDBId'

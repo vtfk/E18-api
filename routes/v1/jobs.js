@@ -10,6 +10,7 @@ const HTTPError = require('../../lib/vtfk-errors/httperror');
 const validateJob = require('../../database/validators/job').validate;
 const isJobMissingOrLocked = require('../../database/validators/job').isMissingOrLocked;
 const { uploadBlob, downloadBlob } = require('../../lib/blob-storage')
+const utils = require('../../lib/vtfk-utilities/vtfk-utilities');
 const { ObjectID } = require('mongodb')
 const merge = require('lodash.merge');
 
@@ -75,6 +76,20 @@ router.get('/:id', async (req, res, next) => {
     next()
   } catch (err) {
     return next(err)
+  }
+})
+
+// Update the job
+router.put('/:id', async (req, res, next) => {
+  try {
+    // Remove any invalid fields
+    req.body = utils.removeKeys(req.body, ['createdDate', 'modifiedData', 'createdBy', 'modifiedBy']);
+    // Update the job
+    req.body = await Job.findByIdAndUpdate(req.params.id, req.body);
+    // Return
+    next();
+  } catch (err) {
+    next(err);
   }
 })
 
@@ -280,7 +295,7 @@ router.post('/:id/tasks/:taskid/operations', async (req, res, next) => {
     }
 
     // If completed, check if every task is completed, if so set the job as completed
-    if (job.tasks.length === job.tasks.filter((f) => f.status === COMPLETED_STATUS).length) {
+    if (job.e18 !== false && job.tasks.length === job.tasks.filter((f) => f.status === COMPLETED_STATUS).length) {
       job.status = COMPLETED_STATUS
     }
 
