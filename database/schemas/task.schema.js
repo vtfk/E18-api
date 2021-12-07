@@ -13,8 +13,8 @@ const operation = new mongoose.Schema({
   message: { type: String },
   createdTimestamp: { type: Date, default: new Date() },
   trackingId: { type: String },
-  data: { type: Object },
-  error: { type: Object }
+  data: { type: mongoose.Schema.Types.Mixed },
+  error: { type: mongoose.Schema.Types.Mixed }
 })
 
 const file = new mongoose.Schema({
