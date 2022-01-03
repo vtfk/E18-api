@@ -31,12 +31,11 @@ app.use(cors(corsOptions))
   Host SwaggerUI and validate incoming requests based on OpenAPI 3.0 spesification files
 */
 // Style the documentation
-app.use('/assets/', express.static(path.join(__dirname, '/assets')))
 const swaggerUIOptions = {
   deepLinking: false,
   displayOperationId: true,
-  customCss: '.topbar { background-color: #B2DCDA!important; } .topbar-wrapper img { content:url(\'/assets/images/vtfk-logo.svg\'); height: 100px; }',
-  customfavIcon: '/assets/images/favicon.ico',
+  customCss: '.topbar { background-color: #B2DCDA!important; } .topbar-wrapper img { content:url(\'./assets/vtfk-logo.svg\'); height: 100px; }',
+  customfavIcon: './assets/favicon.ico',
   customSiteTitle: 'E18 API documentation'
 }
 
@@ -50,10 +49,14 @@ if (routeChildren && Array.isArray(routeChildren)) {
       // Load the file as JSON and determine what the endpoint will be
       const oasJSON = yamljs.load(oasSpecPath)
       const oasDocEndpoint = '/api/' + routeChildren[i] + '/docs'
+      const oasDocAssets = '/api/' + routeChildren[i] + '/docs/assets';
       oasDocumentationEndpoints.push(oasDocEndpoint)
 
       // Host the spesification file
       app.use(oasDocEndpoint + '/oas.yaml', express.static(oasSpecPath))
+
+      // Host the assets
+      app.use(oasDocAssets, express.static(path.join(__dirname, '/assets')))
 
       // Host the documentation
       app.use(oasDocEndpoint, swaggerUi.serve, swaggerUi.setup(oasJSON, swaggerUIOptions))

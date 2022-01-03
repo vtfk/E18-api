@@ -16,6 +16,8 @@ tags:
     description: Retreive statistics from E18
   - name: APIKeys
     description: Requests for handeling API Keys
+  - name: Documentation
+    description: Serves the API documentation
 servers:
   - description: 'Development endpoint'
     url: 'http://localhost:{port}/api/v1'
@@ -578,6 +580,15 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
+  /docs:
+    get:
+      operationId: serveDocs
+      summary: Servers the API documentation
+      tags:
+        - Documentation
+      responses:
+        200:
+          description: Ok
 components:
   schemas:
     Job:
