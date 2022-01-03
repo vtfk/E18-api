@@ -19,23 +19,25 @@ tags:
   - name: Documentation
     description: Serves the API documentation
 servers:
-  - description: 'Development endpoint'
-    url: 'http://localhost:{port}/api/v1'
-    variables:
-      port:
-        enum: ['80', '443', '8080', '8081', '8082', '8083', '8084', '8085', '8086', '8087', '8088', '8089', '8090']
-        default: '8080'
   - description: Hosted endpoint
-    url: '{protocol}://{fqdn}:{port}/e18/api/v1/'
+    url: '{protocol}://{fqdn}:{port}{pathPrefix}/api/v1/'
     variables:
       protocol:
         enum: ['http', 'https']
         default: 'https'
       fqdn:
         default: 'api.vtfk.dev'
+      pathPrefix:
+        default: /e18
       port:
         enum: ['80', '443', '8080', '8081', '8082', '8083', '8084', '8085', '8086', '8087', '8088', '8089', '8090']
         default: '443'
+  - description: 'Development endpoint'
+    url: 'http://localhost:{port}/api/v1'
+    variables:
+      port:
+        enum: ['80', '443', '8080', '8081', '8082', '8083', '8084', '8085', '8086', '8087', '8088', '8089', '8090']
+        default: '8080'
 paths:
   /jobs:
     get:
