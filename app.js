@@ -60,6 +60,7 @@ if (routeChildren && Array.isArray(routeChildren)) {
 
       // Host the documentation
       app.use(oasDocEndpoint, swaggerUi.serve, swaggerUi.setup(oasJSON, swaggerUIOptions))
+      app.use(`${oasDocEndpoint}/`, swaggerUi.serve, swaggerUi.setup(oasJSON, swaggerUIOptions))
 
       // Register the API validator
       app.use(
