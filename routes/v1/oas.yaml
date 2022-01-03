@@ -26,13 +26,14 @@ servers:
         enum: ['http', 'https']
         default: 'https'
       fqdn:
-        default: 'api.vtfk.dev'
+        enum: ['api.vtfk.no', 'api.vtfk.dev']
+        default: 'api.vtfk.no'
       pathPrefix:
         default: /e18
       port:
         enum: ['80', '443', '8080', '8081', '8082', '8083', '8084', '8085', '8086', '8087', '8088', '8089', '8090']
         default: '443'
-  - description: 'Development endpoint'
+  - description: 'Local development'
     url: 'http://localhost:{port}/api/v1'
     variables:
       port:
