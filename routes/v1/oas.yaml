@@ -587,7 +587,7 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
-  /docs:
+  /docs/*:
     get:
       operationId: serveDocs
       summary: Servers the API documentation
