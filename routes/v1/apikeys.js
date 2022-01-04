@@ -32,12 +32,12 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     // Validate and sanitize the apikey
-    const apikey = await validateAPIKey(req.body);
+    await validateAPIKey(req.body);
     console.log('=== API KEY HASHED IN POST ENDPOINT ===')
     /*
       Generate UUID
     */
-    function randomIntFromInterval(min, max) { // min and max included 
+    function randomIntFromInterval (min, max) { // min and max included
       return Math.floor(Math.random() * (max - min + 1) + min)
     }
     function generateKey () {
@@ -48,8 +48,8 @@ router.post('/', async (req, res, next) => {
       const uppercase = [...Array(26)].map((val, i) => String.fromCharCode(i + 65));
 
       const allCharacters = [...specialCharacters, ...lowercase, ...uppercase];
-      
-      for(let i = 0; i < 123; i++) {
+
+      for (let i = 0; i < 123; i++) {
         key += allCharacters[randomIntFromInterval(0, allCharacters.length - 1)];
       }
 

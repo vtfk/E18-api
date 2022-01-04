@@ -35,10 +35,9 @@ module.exports = new HeaderAPIKeyStrategy(
     // Check if the key exists
     const existingKey = await ApiKeys.findOne({ hash: hash });
     // If the key don't exist
-    if(!existingKey) return done(null);
+    if (!existingKey) return done(null);
     // Return ok
     console.log('✅ Successfully authenticated "' + existingKey.name + '"');
     return done(null, existingKey);
-
   }
 )
