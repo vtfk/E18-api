@@ -37,29 +37,51 @@ router.post('/', async (req, res, next) => {
     /*
       Generate UUID
     */
-    function uuidv4 () {
-      const crypto = require('crypto');
-      const uuid = crypto.randomUUID()
-      return uuid
+    function randomIntFromInterval(min, max) { // min and max included 
+      return Math.floor(Math.random() * (max - min + 1) + min)
+    }
+    function generateKey () {
+      let key = '';
+
+      const specialCharacters = ['!', '%', '#', '&', '(', ')', '='];
+      const lowercase = [...Array(26)].map((val, i) => String.fromCharCode(i + 97));
+      const uppercase = [...Array(26)].map((val, i) => String.fromCharCode(i + 65));
+
+      const allCharacters = [...specialCharacters, ...lowercase, ...uppercase];
+      
+      for(let i = 0; i < 123; i++) {
+        key += allCharacters[randomIntFromInterval(0, allCharacters.length - 1)];
+      }
+
+      return key
     }
     /*
       Define the API-Key with the UUID
     */
-    plainAPIKey = uuidv4()
+    plainAPIKey = generateKey()
     console.log('=== APIKEY from UUIDV4 ===')
     console.log(plainAPIKey);
 
     // Hash the api key
     const hash = crypto.createHash('sha512').update(plainAPIKey).digest('hex')
 
-    console.log(hash)
+    const APIKey = {
+      name: req.body.name,
+      enabled: true,
+      hash: hash,
+      createdTimestamp: new Date(),
+      modifiedTimestamp: new Date()
+    }
 
-    // Return the name and apikey to the user.
-    res.send('APIKey Name: ' + apikey.name + '\n' + 'APIKey: ' + plainAPIKey)
+    await ApiKeys.create(APIKey);
 
-    req.body.hash = hash
     // Create and return the apikey
-    res.body = await ApiKeys.create(apikey)
+    res.body = {
+      name: req.body.name,
+      key: plainAPIKey
+    }
+
+    return next();
   } catch (err) {
     return next(err)
   }

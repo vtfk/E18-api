@@ -24,18 +24,21 @@ module.exports = new HeaderAPIKeyStrategy(
   },
   false,
   async (apikey, done) => {
-    const hash = crypto.createHash('sha512').update(apikey).digest('hex')
-    const test = await ApiKeys.findOne({ hash: hash })
-    if (!process.env.NODE_ENV === 'test') {
-      if (test === null) {
-        console.log('❌ No matching API Key could be found');
-        return done(null)
-      } else {
-        // hashedApiKeyFromDB = test.hash
-        return done(null, 'test')
-      }
-    } else {
-      return done(null, 'test')
-    }
+    // If development or test, just return OK.
+    if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
+      console.log(`✅ Successfully authenticated due to beeing in "${process.env.NODE_ENV}" mode`);
+      return done(null, 'ok');
+    };
+
+    // Hash the provided key
+    const hash = crypto.createHash('sha512').update(apikey).digest('hex');
+    // Check if the key exists
+    const existingKey = await ApiKeys.findOne({ hash: hash });
+    // If the key don't exist
+    if(!existingKey) return done(null);
+    // Return ok
+    console.log('✅ Successfully authenticated "' + existingKey.name + '"');
+    return done(null, existingKey);
+
   }
 )

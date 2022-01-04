@@ -106,10 +106,7 @@ app.use(passport.initialize())
 app.all('*',
   passport.authenticate(['headerapikey'], { session: false }),
   (req, res, next) => {
-    if (process.env.NODE_ENV !== 'test') console.log('✅ Authentication ok');
-    // Setup some custom properties that should be usable in the routes and middleware
-    // req.custom = {};
-    next()
+    next();
   }
 )
 
