@@ -20,7 +20,7 @@ router.get('/', async (req, res, next) => {
       jobs = await Job.find({
         $or: [
           { status: 'waiting' },
-          { status: 'failed' },
+          { status: 'failed' }
         ],
         e18: true,
         $and: [
@@ -32,7 +32,7 @@ router.get('/', async (req, res, next) => {
       jobs = await Job.find({
         $or: [
           { status: 'waiting' },
-          { status: 'failed' },
+          { status: 'failed' }
         ],
         e18: true,
         'tasks.status': { $ne: 'competed' }
