@@ -1,1 +1,1 @@
-module.exports.statuses = ['waiting', 'running', 'suspended', 'retried', 'completed', 'failed']
+module.exports.statuses = ['waiting', 'running', 'suspended', 'retired', 'completed', 'failed']

@@ -18,7 +18,10 @@ router.get('/', async (req, res, next) => {
     let jobs = []
     if (req.query.type) {
       jobs = await Job.find({
-        status: { $ne: 'completed' },
+        $or: [
+          { status: 'waiting' },
+          { status: 'failed' },
+        ],
         e18: true,
         $and: [
           { 'tasks.status': { $ne: 'completed' } },
@@ -27,7 +30,10 @@ router.get('/', async (req, res, next) => {
       }).lean()
     } else {
       jobs = await Job.find({
-        status: { $ne: 'completed' },
+        $or: [
+          { status: 'waiting' },
+          { status: 'failed' },
+        ],
         e18: true,
         'tasks.status': { $ne: 'competed' }
       }).lean()
@@ -38,7 +44,7 @@ router.get('/', async (req, res, next) => {
 
     if (!jobs || jobs.length === 0) {
       res.body = [];
-      next();
+      return next();
     }
 
     // Determine if the tasks in the job matches the criteria to be checked out
@@ -68,7 +74,7 @@ router.get('/', async (req, res, next) => {
         }
 
         // Make a copy of the task and include jobId
-        const taskCopy = { jobId: job._id, ...task }
+        const taskCopy = { jobId: job._id, jobStatus: job.status, ...task }
 
         // Make a merged object with collectedData and task data
         const data = merge(collectedData, task.data);
@@ -99,7 +105,7 @@ router.get('/', async (req, res, next) => {
 
     // Only return jobs that are applicable to run
     res.body = readyTasks
-    next()
+    return next();
   } catch (err) {
     return next(err)
   }

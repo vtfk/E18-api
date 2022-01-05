@@ -28,7 +28,12 @@ router.get('/', async (req, res, next) => {
 router.post('/maintain', async (req, res, next) => {
   try {
     // Retreive all completed jobs
-    const jobs = await Jobs.find({ status: 'completed' })
+    const jobs = await Jobs.find({
+      $or: [
+        {status: 'completed'},
+        {status: 'retired'}
+      ]
+     })
     if (!jobs || (Array.isArray(jobs) && jobs.length <= 0)) return next()
 
     // This is done through a regular for loop to be able to use await
@@ -57,9 +62,6 @@ router.post('/maintain', async (req, res, next) => {
           }
         }
       }
-
-      console.log('== Moving to statistics ==');
-      vtfkutils.inspect(copy);
 
       // Create statistics entry
       await Statistics.create(copy)
