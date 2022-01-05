@@ -10,8 +10,22 @@ const cors = require('cors') // For handeling CORS
 const swaggerUi = require('swagger-ui-express') // For hosting and displaying the APIs documentation
 const OpenApiValidator = require('express-openapi-validator') // Validates all routes based on the requested resource
 const { determineDocumentationLinks } = require('./lib/oas') // Function for determining if there are any documentation links to provide in case of an error
+
+/*
+  Setup database connection
+*/
 const db = require('./database/db')
 db.connect()
+
+/*
+  Setup logging
+*/
+const { logger, logConfig } = require('@vtfk/logger');
+logConfig({
+  remote: {
+    onlyInProd: false
+  }
+})
 
 /*
   Setup express instance
@@ -172,7 +186,17 @@ app.use((err, req, res, next) => {
   if (documentation) { error.documentation = documentation }
 
   // Output the error
-  if (process.env.NODE_ENV !== 'test') console.error(error)
+  if (process.env.NODE_ENV !== 'test') {
+    let errorMessage = error.stack ? `${error.message}\n${error.stack}` : error.message;
+    try {
+      logger('error', errorMessage);
+    } catch(err) {
+      console.log('Error occured and Papertrail-logging failed');
+      console.log(err);
+      console.log('Original error:');
+      console.log(errorMessage);
+    }
+  }
 
   // Send the error
   res.status(err.status || err.statusCode || 500).json(error)
