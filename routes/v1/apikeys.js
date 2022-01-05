@@ -33,7 +33,7 @@ router.post('/', async (req, res, next) => {
   try {
     // Validate and sanitize the apikey
     await validateAPIKey(req.body);
-    console.log('=== API KEY HASHED IN POST ENDPOINT ===')
+
     /*
       Generate UUID
     */
@@ -59,8 +59,6 @@ router.post('/', async (req, res, next) => {
       Define the API-Key with the UUID
     */
     plainAPIKey = generateKey()
-    console.log('=== APIKEY from UUIDV4 ===')
-    console.log(plainAPIKey);
 
     // Hash the api key
     const hash = crypto.createHash('sha512').update(plainAPIKey).digest('hex')
@@ -108,10 +106,6 @@ router.delete('/:id', async (req, res, next) => {
     if (!req.params.id) throw new HTTPError(404, 'ApiKey not found in the database, cannot delete something that is not found');
 
     const result = await ApiKeys.findByIdAndDelete(req.params.id);
-
-    if (result) {
-      console.log(`API-Key with the ID - ${req.params.id} is deleted.`)
-    }
 
     res.body = result;
     next()
