@@ -187,10 +187,10 @@ app.use((err, req, res, next) => {
 
   // Output the error
   if (process.env.NODE_ENV !== 'test') {
-    let errorMessage = error.stack ? `${error.message}\n${error.stack}` : error.message;
+    const errorMessage = error.stack ? `${error.message}\n${error.stack}` : error.message;
     try {
       logger('error', errorMessage);
-    } catch(err) {
+    } catch (err) {
       console.log('Error occured and Papertrail-logging failed');
       console.log(err);
       console.log('Original error:');
