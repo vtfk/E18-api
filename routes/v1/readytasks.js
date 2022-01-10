@@ -35,7 +35,7 @@ router.get('/', async (req, res, next) => {
           { status: 'failed' }
         ],
         e18: true,
-        'tasks.status': { $ne: 'competed' }
+        'tasks.status': { $ne: 'completed' }
       }).lean()
     }
 
