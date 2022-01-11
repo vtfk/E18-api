@@ -203,6 +203,13 @@ paths:
           schema:
             type: string
             example: svarut
+        - in: query
+          name: checkout
+          description: Also checksout the tasks returned
+          schema:
+            type: boolean
+            example: true
+            default: false
       responses:
         200:
           description: Ok
