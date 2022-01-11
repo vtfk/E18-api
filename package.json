@@ -33,7 +33,7 @@
     "supertest": "6.1.6"
   },
   "dependencies": {
-    "@vtfk/azure-blob-client": "0.0.4",
+    "@vtfk/azure-blob-client": "0.1.0",
     "@vtfk/logger": "^4.0.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
