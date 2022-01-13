@@ -1,6 +1,7 @@
 /*
   Import dependencies
 */
+const config = require('./config') // Loads the config
 const fs = require('fs') // For working with the file system
 const path = require('path') // For combining paths
 const yamljs = require('yamljs') // For converting YAML to JSON
@@ -31,8 +32,9 @@ logConfig({
   Setup express instance
 */
 const app = express() // Creates the express instance
-app.use(express.json()) // Automatically parse JSON body
+app.use(express.json({ limit: `${config.E18_REQUEST_LIMIT_MB}mb` })) // Automatically parse JSON body
 app.use(morgan('dev')) // Output request information to stdout
+
 // Handle CORS
 const corsOptions = {
   origin: true,

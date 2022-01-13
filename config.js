@@ -14,5 +14,6 @@ module.exports = {
   dbConnectionString: process.env.DBCONNECTIONSTRING,
   useMock: process.env.USE_MOCK,
   saConnectionString: process.env.STORAGE_ACCOUNT_CONNECTIONSTRING,
-  saBlobName: process.env.STORAGE_ACCOUNT_BLOB_NAME
+  saBlobName: process.env.STORAGE_ACCOUNT_BLOB_NAME,
+  E18_REQUEST_LIMIT_MB: process.env.E18_REQUEST_LIMIT_MB || '25'
 }
