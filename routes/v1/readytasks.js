@@ -83,7 +83,7 @@ router.get('/', async (req, res, next) => {
         const orchestratorRequest = {
           e18: {
             jobId: job._id,
-            taskId: task._id,
+            taskId: task._id
           },
           ...data
         }
