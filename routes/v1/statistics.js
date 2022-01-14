@@ -70,6 +70,10 @@ router.post('/maintain', async (req, res, next) => {
       await Jobs.deleteOne({ _id: job._id })
     }
 
+    res.body = {
+      transferedEntries: jobs.length
+    }
+
     next()
   } catch (err) {
     return Promise.reject(err)
