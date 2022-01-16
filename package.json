@@ -38,7 +38,7 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "express-openapi-validator": "^4.13.2",
+    "express-openapi-validator": "^4.13.4",
     "lodash.merge": "^4.6.2",
     "mongoose": "^6.1.5",
     "odata-v4-mongodb": "^0.1.12",
