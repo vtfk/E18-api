@@ -68,7 +68,7 @@ router.get('/', async (req, res, next) => {
         // If paralell exectuion, check if there are uncompleted dependencies
         if (job.parallel) {
           if (task.dependencies && Array.isArray(task.dependencies) && task.dependencies.length > 0) {
-            const incompleteDependencies = jobs.tasks.filter((t) => task.dependencies.includes(t.dependencyTag) && t.status !== 'completed')
+            const incompleteDependencies = job.tasks.filter((t) => task.dependencies.includes(t.dependencyTag) && t.status !== 'completed')
             if (incompleteDependencies.length > 0) continue
           }
         }
