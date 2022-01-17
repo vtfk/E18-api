@@ -14,33 +14,23 @@ router.get('/', async (req, res, next) => {
   try {
     // Tasks that matches the criteria to be checked out
     const readyTasks = []
-    // Retreive the jobs
-    let jobs = []
-    if (req.query.type) {
-      jobs = await Job.find({
-        $or: [
-          { status: 'waiting' },
-          { status: 'failed' }
-        ],
-        e18: true,
-        $and: [
-          { 'tasks.status': { $ne: 'completed' } },
-          { 'tasks.type': req.query.type }
-        ]
-      }).lean()
-    } else {
-      jobs = await Job.find({
-        $or: [
-          { status: 'waiting' },
-          { status: 'failed' }
-        ],
-        e18: true,
-        'tasks.status': { $ne: 'completed' }
-      }).lean()
+    // Construct query to db
+    const query = {
+      $or: [
+        { status: 'waiting' },
+        { status: 'running' },
+        { status: 'failed' }
+      ],
+      e18: true
     }
-
-    // Just make double sure that the jobs are actually not completed
-    jobs = jobs.filter((j) => j.status !== 'completed' || j.status !== 'retired' || j.status !== 'suspended')
+    if (req.query.type) {
+      query['tasks.type'] = req.query.type
+    }
+    
+    // Retreive the jobs
+    const rawJobs = await Job.find(query).lean()
+    // And just make double sure that the jobs are actually not completed
+    const jobs = rawJobs.filter(j => j.status !== 'completed' && j.status !== 'retired' && j.status !== 'suspended')
 
     if (!jobs || jobs.length === 0) {
       res.body = [];
@@ -55,7 +45,7 @@ router.get('/', async (req, res, next) => {
       for (const task of job.tasks) {
         taskIndex++;
         if (task.status === 'completed') {
-          collectedData[task.type] = task.operations.find((o) => o.status === 'completed').data
+          collectedData[task.method] = task.operations.find((o) => o.status === 'completed').data
           continue;
         } else if (task.status === 'running') {
           continue
