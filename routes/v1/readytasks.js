@@ -26,7 +26,7 @@ router.get('/', async (req, res, next) => {
     if (req.query.type) {
       query['tasks.type'] = req.query.type
     }
-    
+
     // Retreive the jobs
     const rawJobs = await Job.find(query).lean()
     // And just make double sure that the jobs are actually not completed
