@@ -81,8 +81,10 @@ router.get('/', async (req, res, next) => {
 
         // Create an request object for the orchestrator to use, this is only for QOL as we do not need to build this in the LogicApp
         const orchestratorRequest = {
-          jobId: job._id,
-          taskId: task._id,
+          e18: {
+            jobId: job._id,
+            taskId: task._id
+          },
           ...data
         }
 
@@ -101,6 +103,16 @@ router.get('/', async (req, res, next) => {
           })
         }
       }
+    }
+
+    // Is specified, also checkout the tasks
+    if (req.query.checkout === true) {
+      // Retreive the ID of all the tasks that should be updated
+      const taskIds = readyTasks.map((t) => t._id.toString());
+      // Update that status of the job and tasks to running
+      await Job.updateMany({ 'tasks._id': { $in: taskIds } }, { $set: { status: 'running', 'tasks.$.status': 'running' } }, { new: true });
+      // Also update readyTasks, just to be consistent
+      readyTasks.forEach((t) => { t.status = 'running'; t.jobStatus = 'running' });
     }
 
     // Only return jobs that are applicable to run
