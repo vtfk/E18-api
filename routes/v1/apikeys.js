@@ -102,7 +102,6 @@ router.get('/:id', async (req, res, next) => {
 // Delete apikey by id
 router.delete('/:id', async (req, res, next) => {
   try {
-    console.log(req.params.id)
     if (!req.params.id) throw new HTTPError(404, 'ApiKey not found in the database, cannot delete something that is not found');
 
     const result = await ApiKeys.findByIdAndDelete(req.params.id);
