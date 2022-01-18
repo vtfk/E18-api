@@ -326,38 +326,6 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
-  /jobs/{id}/tasks/{taskid}/checkout:
-    put:
-      operationId: checkoutTask
-      summary: Checksout a task
-      description: Checks out the task so it cannot by checked out by others
-      tags:
-        - Tasks
-      security:
-        - APIKey: []
-        - Bearer: []
-      parameters:
-        - $ref: "#/components/parameters/id"
-        - in: path
-          name: taskid
-          required: true
-          schema:
-            $ref: '#/components/schemas/MongoDBId'
-      responses:
-        200:
-          description: Ok
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
-        400:
-          $ref: '#/components/responses/400'
-        401:
-          $ref: '#/components/responses/401'
-        404:
-          $ref: '#/components/responses/404'
-        500:
-          $ref: '#/components/responses/500'
   /jobs/{id}/tasks/{taskid}/operations:
     post:
       operationId: postTaskOperation
