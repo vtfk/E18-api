@@ -682,7 +682,18 @@ components:
           minItems: 1
           items:
             type: string
-        
+        dataMapping:
+          oneOf:
+            - type: array
+              description: An array of paths ('*', 'fruits=fruits', 'fruits.apple=fruits.apple') to the collected data needed from previous task
+              example:
+                value: ['fruits.apple', 'fruits.apple=vegetables.carrot']
+                summary: 'Apple property in data.fruits from previous task'
+            - type: string
+              description: A path ('*', 'fruits=fruits', 'fruits.apple=fruits.apple') to the collected data needed from previous task
+              example:
+                value: 'fruits.apple=vegetables.carrot'
+                summary: 'Apple property in data.fruits from previous task'
         operations:
           type: array
           items:

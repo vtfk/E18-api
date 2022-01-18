@@ -5,6 +5,7 @@ const express = require('express')
 const router = express.Router()
 const Job = require('../../database/db').Job
 const merge = require('lodash.merge');
+const { getTaskData } = require('../../lib/vtfk-utilities/vtfk-utilities')
 
 /*
   Routes
@@ -39,13 +40,13 @@ router.get('/', async (req, res, next) => {
 
     // Determine if the tasks in the job matches the criteria to be checked out
     for (const job of jobs) {
-      const collectedData = {}
+      let collectedData = {}
       if (!job.tasks) continue
       let taskIndex = -1;
       for (const task of job.tasks) {
         taskIndex++;
         if (task.status === 'completed') {
-          collectedData[task.method] = task.operations.find((o) => o.status === 'completed').data
+          collectedData = merge(collectedData, task.operations.find((o) => o.status === 'completed').data)
           continue;
         } else if (task.status === 'running') {
           continue
@@ -55,7 +56,7 @@ router.get('/', async (req, res, next) => {
           continue;
         }
 
-        // If paralell exectuion, check if there are uncompleted dependencies
+        // If parallel execution, check if there are uncompleted dependencies
         if (job.parallel) {
           if (task.dependencies && Array.isArray(task.dependencies) && task.dependencies.length > 0) {
             const incompleteDependencies = job.tasks.filter((t) => task.dependencies.includes(t.dependencyTag) && t.status !== 'completed')
@@ -67,7 +68,7 @@ router.get('/', async (req, res, next) => {
         const taskCopy = { jobId: job._id, jobStatus: job.status, ...task }
 
         // Make a merged object with collectedData and task data
-        const data = merge(collectedData, task.data);
+        const data = (task.dataMapping || Array.isArray(task.dataMapping)) ? getTaskData(task.dataMapping, collectedData, taskCopy.data) : task.data
 
         // Create an request object for the orchestrator to use, this is only for QOL as we do not need to build this in the LogicApp
         const orchestratorRequest = {
@@ -79,19 +80,10 @@ router.get('/', async (req, res, next) => {
         }
 
         // Add to the readyTasks array
-        if (req.query.type && req.query.type === task.type) {
-          readyTasks.push({
-            ...taskCopy,
-            data,
-            request: orchestratorRequest
-          })
-        } else {
-          readyTasks.push({
-            ...taskCopy,
-            data,
-            request: orchestratorRequest
-          })
-        }
+        readyTasks.push({
+          ...taskCopy,
+          request: orchestratorRequest
+        })
       }
     }
 

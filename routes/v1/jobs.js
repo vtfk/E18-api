@@ -9,10 +9,9 @@ const dbTools = require('../../database/db.tools.js')
 const HTTPError = require('../../lib/vtfk-errors/httperror');
 const validateJob = require('../../database/validators/job').validate;
 const isJobMissingOrLocked = require('../../database/validators/job').isMissingOrLocked;
-const { uploadBlob, downloadBlob } = require('../../lib/blob-storage')
+const { uploadBlob } = require('../../lib/blob-storage')
 const utils = require('../../lib/vtfk-utilities/vtfk-utilities');
 const { ObjectID } = require('mongodb')
-const merge = require('lodash.merge');
 
 /*
   Routes
