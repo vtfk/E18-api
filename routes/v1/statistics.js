@@ -3,12 +3,11 @@
 */
 const express = require('express')
 const router = express.Router()
-const HTTPError = require('../../lib/vtfk-errors/httperror')
 const dbTools = require('../../database/db.tools');
 const Statistics = require('../../database/db').Statistic
 const Jobs = require('../../database/db').Job
 const vtfkutils = require('../../lib/vtfk-utilities/vtfk-utilities')
-const { deleteFolder } = require('../../lib/blob-storage')
+const { remove } = require('@vtfk/azure-blob-client');
 
 /*
   Routes
@@ -55,11 +54,7 @@ router.post('/maintain', async (req, res, next) => {
         }
 
         if (tasksWithFiles) {
-          try {
-            await deleteFolder(copy._id)
-          } catch (error) {
-            throw new HTTPError(500, 'Failed to remove files from blob storage')
-          }
+          await remove(copy._id);
         }
       }
 
@@ -70,13 +65,14 @@ router.post('/maintain', async (req, res, next) => {
       await Jobs.deleteOne({ _id: job._id })
     }
 
+    // Set the response body
     res.body = {
       transferedEntries: jobs.length
     }
 
-    next()
+    return next()
   } catch (err) {
-    return Promise.reject(err)
+    return next(err);
   }
 })
 
