@@ -21,7 +21,9 @@ function validate (job) {
     // Valiadte tasks
     if (!job.tasks) throw new HTTPError(400, 'tasks cannot be empty when e18 is true');
     if (!Array.isArray(job.tasks) || job.tasks.length === 0) throw new HTTPError(400, 'tasks cannot be empty when e18 is true');
+    let taskIndex = -1;
     job.tasks.forEach((task) => {
+      taskIndex++;
       // If the task should be processed by E18, but no data has been provided
       // if (!task.data || typeof task.data !== 'object' || Object.keys(task.data).length <= 0) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
       // Make dependencyTag checks
@@ -42,6 +44,19 @@ function validate (job) {
         // Add any dependencies to the array that have not been previously added
         task.dependencies.forEach((d) => {
           if (!dependencies.includes(d)) dependencies.push(d);
+        })
+      }
+      // Check datamapping
+      if(task.dataMapping) {
+        const dataMapping = Array.isArray(task.dataMapping) ? task.dataMapping : [task.dataMapping];
+        let mappingIndex = -1;
+        dataMapping.forEach((mapping) => {
+          mappingIndex++;
+          if(mapping === '*') return;
+          if(!mapping.includes('=')) {
+            try { JSON.parse(mapping); }
+            catch (err) { throw new Error(`Invalid datamapping for task at index ${taskIndex} : mapping index ${mappingIndex} : ${mapping} : ${err.message}`); }
+          }
         })
       }
 
