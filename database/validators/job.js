@@ -47,15 +47,14 @@ function validate (job) {
         })
       }
       // Check datamapping
-      if(task.dataMapping) {
+      if (task.dataMapping) {
         const dataMapping = Array.isArray(task.dataMapping) ? task.dataMapping : [task.dataMapping];
         let mappingIndex = -1;
         dataMapping.forEach((mapping) => {
           mappingIndex++;
-          if(mapping === '*') return;
-          if(!mapping.includes('=')) {
-            try { JSON.parse(mapping); }
-            catch (err) { throw new Error(`Invalid datamapping for task at index ${taskIndex} : mapping index ${mappingIndex} : ${mapping} : ${err.message}`); }
+          if (mapping === '*') return;
+          if (!mapping.includes('=')) {
+            try { JSON.parse(mapping); } catch (err) { throw new Error(`Invalid datamapping for task at index ${taskIndex} : mapping index ${mappingIndex} : ${mapping} : ${err.message}`); }
           }
         })
       }
