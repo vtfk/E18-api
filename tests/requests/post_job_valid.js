@@ -56,5 +56,36 @@ module.exports = [
         }
       ]
     }
+  },
+  {
+    description: 'Job has task with datamapping JSON',
+    data: {
+      system: 'E18',
+      projectId: 0,
+      tasks: [
+        {
+          system: 'p360',
+          method: 'archive',
+          dataMapping: '{"parameter": { "Documents": [ { "DocumentNumber": "{{DocumentNumber}}" }]}}'
+        }
+      ]
+    }
+  },
+  {
+    description: 'Job has task with datamapping JSON in array',
+    data: {
+      system: 'E18',
+      projectId: 0,
+      tasks: [
+        {
+          system: 'p360',
+          method: 'archive',
+          dataMapping: [
+            '*',
+            '{"parameter": { "Documents": [ { "DocumentNumber": "{{DocumentNumber}}" }]}}'
+          ]
+        }
+      ]
+    }
   }
 ]

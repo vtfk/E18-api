@@ -180,5 +180,41 @@ module.exports = [
         }
       ]
     }
+  },
+  {
+    description: 'Job has task with invalid datamapping JSON',
+    data: {
+      system: 'E18',
+      projectId: 0,
+      tasks: [
+        {
+          system: 'p360',
+          method: 'archive',
+          dataMapping: '{parameter": { "Documents": [ { "DocumentNumber": "{{DocumentNumber}}" }]}}'
+        }
+      ]
+    }
+  },
+  {
+    description: 'Job has task with invalid datamapping JSON in array',
+    data: {
+      system: 'E18',
+      projectId: 0,
+      tasks: [
+        {
+          system: 'p360',
+          method: 'archive',
+          dataMapping: [
+            '*',
+            '{parameter": { "Documents": [ { "DocumentNumber": "{{DocumentNumber}}" }]}}'
+          ]
+        },
+        {
+          system: 'p360',
+          method: 'archive',
+          dependencies: ['B']
+        }
+      ]
+    }
   }
 ]

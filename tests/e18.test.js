@@ -57,7 +57,7 @@ describe('Test all jobs endpoint', () => {
     invalidExamples.forEach((example) => {
       test(example.description, async () => {
         const response = await request(app).post('/api/v1/jobs').set(headers).send(example.data);
-        expect(response.status).toBe(400);
+        expect(response.status).not.toBe(200);
         expect(response.body).not.toBeUndefined();
       })
     })
@@ -69,7 +69,7 @@ describe('Test all jobs endpoint', () => {
       jobs = response.body.data;
       outputError(response);
       expect(response.status).toBe(200);
-      expect(jobs.length).toBe(3);
+      expect(jobs.length).toBe(5);
     })
 
     test('Get the first job by id', async () => {
@@ -95,8 +95,8 @@ describe('POST: api/v1/jobs/tasks', () => {
 })
 
 describe('POST: api/v1/jobs/tasks - Invalid data', () => {
-  const validExamples = require('./requests/post_task_invalid.js');
-  validExamples.forEach((example) => {
+  const invalidExamples = require('./requests/post_task_invalid.js');
+  invalidExamples.forEach((example) => {
     test(example.description, async () => {
       const e18Job = jobs.find((j) => j.e18 === example.e18);
       const response = await request(app).post(`/api/v1/jobs/${e18Job._id}/tasks`).set(headers).send(example.data);
