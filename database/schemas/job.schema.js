@@ -20,8 +20,8 @@ const schema = new mongoose.Schema({
   regarding: { type: String },
   comment: { type: String },
   tags: { type: [String] },
-  createdTimestamp: { type: Date, default: new Date().toISOString() },
-  modifiedTimestamp: { type: Date, default: new Date().toISOString() }
+  createdTimestamp: { type: Date, default: new Date() },
+  modifiedTimestamp: { type: Date, default: new Date() }
 })
 
 /*
