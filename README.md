@@ -2,6 +2,33 @@
 
 ## Usage
 
+### Add statistics from a system
+
+**`POST /jobs`**
+
+```json
+{
+  "system": "<unique-identifier-for-your-system>",
+  "type": "<unique-identifier-for-this-operation>",
+  "status": "completed", // must be set to completed for statistics
+  "projectId": 0, // Project id
+  "e18": false, // must be set to false for statistics
+  "tasks": [ // add one task entry pr item this job has performed
+    {
+      "system": "<which-system/api-has-been-used>", // see system overview
+      "method": "<which-endpoint-in-system/api-has-been-called",
+      "status": "completed", // must be set to completed for statistics
+      "regarding": "something", // optional free text field (no sensitive information!)
+      "tags": [ // optional array of tags (can be handy for sorting in statistics overview)
+        "hey there"
+      ]
+    }
+  ]
+}
+```
+
+## Local development
+
 For local development create a `.env.development` file
 ```bash
 DBCONNECTIONSTRING=mongodb+srv://<username>:<password>@<mongoHost>?retryWrites=true&w=majority
@@ -9,15 +36,13 @@ AZURE_BLOB_CONNECTIONSTRING=get-connection-string-from-access-keys-on-your-stora
 AZURE_BLOB_CONTAINERNAME=files
 ```
 
-## Blob storage
+### Blob storage
 
 Create a storage account in your resource group.
 
 Create a blob container with the name specified in `AZURE_BLOB_CONTAINERNAME`
 
 Set `AZURE_BLOB_CONNECTIONSTRING` as the **Connection string** found in `Access keys` in your storage account
-
-### Usage
 
 #### Upload blob
 
