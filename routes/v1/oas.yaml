@@ -880,7 +880,7 @@ components:
     select:
       in: query
       name: $select
-      description: Comma sepparated list of specific properties to get
+      description: Comma sepparated list of specific properties to get (case sensitive)
       example: 'column1, column2, column3'
       allowReserved: true
       style: form
@@ -894,7 +894,7 @@ components:
     filter:
       in: query
       name: $filter
-      description: OData filter expression
+      description: OData filter expression (case sensitive)
       example: "status eq 'running'"
       allowReserved: true
       schema:
@@ -903,7 +903,7 @@ components:
     orderby:
       in: query
       name: $orderby
-      description: One or more properties to sort by
+      description: One or more properties to sort by (case sensitive)
       example: column1, column2
       style: form
       explode: false
@@ -930,7 +930,7 @@ components:
     search:
       in: query
       name: $search
-      description: A search term for data. (The search must be a full match)
+      description: A search term for data. (The search must be a full match) (case sensitive)
       schema:
         type: string
         minLength: 1
