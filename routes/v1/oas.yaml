@@ -895,7 +895,7 @@ components:
       in: query
       name: $filter
       description: OData filter expression
-      example: "status -eq 'running'"
+      example: "status eq 'running'"
       allowReserved: true
       schema:
         type: string
