@@ -47,7 +47,7 @@ router.get('/', async (req, res, next) => {
         taskIndex++;
         if (task.status === 'completed') {
           const completedOperation = task.operations.find((o) => o.status === 'completed');
-          if (completedOperation?.data) collectedData = merge(collectedData, completedOperation?.data)
+          if (completedOperation?.data && typeof completedOperation.data === 'object') collectedData = merge(collectedData, completedOperation?.data)
           continue;
         } else if (task.status === 'running') {
           continue

@@ -24,8 +24,11 @@ function validate (job) {
     let taskIndex = -1;
     job.tasks.forEach((task) => {
       taskIndex++;
-      // If the task should be processed by E18, but no data has been provided
-      // if (!task.data || typeof task.data !== 'object' || Object.keys(task.data).length <= 0) throw new HTTPError(400, 'Data must be provided on all tasks for E18 to process them');
+      if (task.method === 'e18-function-test') {
+        console.log(task);
+      }
+      // Check if the task for some reason has gotten in as type function
+      if (task.data && typeof task.data === 'function') throw new HTTPError(400, 'Task data cannot be of type \'function\'');
       // Make dependencyTag checks
       if (task.dependencyTag) {
         // Task cannot have dependency tag when there is only a single task

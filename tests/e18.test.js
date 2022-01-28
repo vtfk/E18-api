@@ -64,12 +64,12 @@ describe('Test all jobs endpoint', () => {
   })
 
   describe('GET: api/v1/jobs', () => {
-    test('Get the posted jobs', async () => {
+    test('Check that jobs has been posted', async () => {
       const response = await request(app).get('/api/v1/jobs').set(headers).send();
       jobs = response.body.data;
       outputError(response);
       expect(response.status).toBe(200);
-      expect(jobs.length).toBe(5);
+      expect(jobs.length).toBeGreaterThan(0);
     })
 
     test('Get the first job by id', async () => {

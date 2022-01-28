@@ -87,5 +87,61 @@ module.exports = [
         }
       ]
     }
+  },
+  {
+    description: 'Job with task containing array data',
+    data: {
+      system: 'E18',
+      projectId: 0,
+      tasks: [
+        {
+          system: 'e18-test',
+          method: 'test',
+          data: ['test']
+        }
+      ]
+    }
+  },
+  {
+    description: 'Job with task containing string data',
+    data: {
+      system: 'E18',
+      projectId: 0,
+      tasks: [
+        {
+          system: 'e18-test',
+          method: 'test',
+          data: 'test'
+        }
+      ]
+    }
+  },
+  {
+    description: 'Job with task containing number data',
+    data: {
+      system: 'E18',
+      projectId: 0,
+      tasks: [
+        {
+          system: 'e18-test',
+          method: 'test',
+          data: 123
+        }
+      ]
+    }
+  },
+  {
+    description: 'Job with task containing bool data',
+    data: {
+      system: 'E18',
+      projectId: 0,
+      tasks: [
+        {
+          system: 'e18-test',
+          method: 'test',
+          data: true
+        }
+      ]
+    }
   }
 ]

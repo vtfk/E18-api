@@ -32,7 +32,6 @@ module.exports = [
       ]
     }
   },
-  // Missing projectId
   {
     description: 'Missing projectId',
     data: {
@@ -64,7 +63,34 @@ module.exports = [
       ]
     }
   },
-  // Missing tasks
+  {
+    description: 'task.data is empty object',
+    data: {
+      system: 'E18',
+      projectId: 0,
+      tasks: [
+        {
+          system: 'e18',
+          method: 'e18-test',
+          data: {}
+        }
+      ]
+    }
+  },
+  {
+    description: 'task.data is empty array',
+    data: {
+      system: 'E18',
+      projectId: 0,
+      tasks: [
+        {
+          system: 'e18',
+          method: 'e18-test',
+          data: []
+        }
+      ]
+    }
+  },
   {
     description: 'Missing tasks',
     data: {
@@ -72,49 +98,6 @@ module.exports = [
       projectId: 0
     }
   },
-  // // Task is missing data
-  // {
-  //   description: 'Tasks are missing data',
-  //   data: {
-  //     system: 'E18',
-  //     projectId: 0,
-  //     tasks: [
-  //       {
-  //         system: 'svarut',
-  //         method: 'send'
-  //       }
-  //     ]
-  //   }
-  // },
-  // Task has unknown system
-  // {
-  //   description: 'taskHasUnknownSystem',
-  //   data: {
-  //     system: 'E18',
-  //     projectId: 0,
-  //     tasks: [
-  //       {
-  //         system: 'FEIL',
-  //         method: 'send'
-  //       }
-  //     ]
-  //   }
-  // },
-  // // Task has unknown method
-  // {
-  //   description: 'taskHasUnknownMethod',
-  //   data: {
-  //     system: 'E18',
-  //     projectId: 0,
-  //     tasks: [
-  //       {
-  //         system: 'svarut',
-  //         method: 'FEIL'
-  //       }
-  //     ]
-  //   }
-  // },
-  // Task has unknown method
   {
     description: 'singleTaskHasDependencyTag',
     date: {
