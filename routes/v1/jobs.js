@@ -179,26 +179,30 @@ router.post('/:id/tasks/:taskid/operations', async (req, res, next) => {
     // Make sure that you cannot add operations to a task that is already completed
     if (job.tasks[taskIndex].status === COMPLETED_STATUS) throw new HTTPError(400, 'You cannot report operations to a task that is already completed')
 
-    // Set the task status
+    // Update data based on the operations
     switch (req.body.status) {
       case 'completed':
         job.tasks[taskIndex].status = COMPLETED_STATUS
         break
       case 'failed':
-        job.tasks[taskIndex].status = 'failed'
         job.status = 'failed';
+        job.tasks[taskIndex].status = 'failed'
+        if (job.tasks[taskIndex].operations?.length) job.tasks[taskIndex].retries = job.tasks[taskIndex].operations.length;
+        if(job.tasks[taskIndex].retries > 0) job.retries += 1;
         break
     }
 
     // Push the operation
     job.tasks[taskIndex].operations.push(req.body)
 
-    // Update retries on task from response
-    if (req.body.retries) {
-      if (typeof req.body.retries === 'number' && req.body.retries > 0) job.tasks[taskIndex].retries += req.body.retries
-      else if (Array.isArray(req.body.retries)) job.tasks[taskIndex].retries += req.body.retries.length
-      else if (typeof req.body.retries === 'string' && parseInt(req.body.retries)) job.tasks[taskIndex].retries += parseInt(req.body.retries)
-    }
+    // Update retries on task from flow response
+    // if (req.body.retries) {
+    //   if (typeof req.body.retries === 'number' && req.body.retries > 0) job.tasks[taskIndex].retries += req.body.retries
+    //   else if (Array.isArray(req.body.retries)) job.tasks[taskIndex].retries += req.body.retries.length
+    //   else if (typeof req.body.retries === 'string' && parseInt(req.body.retries)) job.tasks[taskIndex].retries += parseInt(req.body.retries)
+    // } else {
+    //   job.tasks[taskIndex].retries += 1;
+    // }
 
     // If completed, check if every task is completed, if so set the job as completed
     if (job.e18 !== false && job.tasks.length === job.tasks.filter((f) => f.status === COMPLETED_STATUS).length) {
