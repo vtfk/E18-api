@@ -93,6 +93,12 @@ if (routeChildren && Array.isArray(routeChildren)) {
   Validate that the route exists and that the database is connected
 */
 app.use('*', (req, res, next) => {
+  // Handle Azure healthCheck and alwaysOn requests
+  if (req.headers) {
+    const userAgent = req.headers['user-agent']?.toLowerCase();
+    if (userAgent && (userAgent.includes('alwayson') || userAgent.includes('healthcheck'))) return res.sendStatus(200);
+  }
+
   // Validate that the route is specified in the spec
   if (!req.openapi) {
     next(new HTTPError(404, `The route ${req.originalUrl} does not exist`))
