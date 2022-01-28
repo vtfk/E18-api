@@ -124,7 +124,6 @@ app.all('*',
   passport.authenticate(['headerapikey'], { session: false }),
   (req, res, next) => {
     req.isAuthenticated = true;
-    next(new Error('Her gikk noe feil'))
     next();
   }
 )
@@ -193,14 +192,14 @@ app.use((err, req, res, next) => {
   // Output the error
   if (process.env.NODE_ENV !== 'test') {
     let errorMessage = error.message;
-    if(error.stack) errorMessage += `\nStack: ${error.stack}`
-    if(req) {
-      if(req.headers || req.socket) errorMessage += `\nRequestor IP: ${req.headers['x-forwarded-for'] || req.socket?.remoteAddress}`
+    if (error.stack) errorMessage += `\nStack: ${error.stack}`
+    if (req) {
+      if (req.headers || req.socket) errorMessage += `\nRequestor IP: ${req.headers['x-forwarded-for'] || req.socket?.remoteAddress}`
       errorMessage += `\nHTTP Method: ${req.method}`
       errorMessage += `\nRequested endpoint: ${req.originalUrl}`
-      if(req.headers && req.isAuthenticated) errorMessage += `\nHeaders:\n${JSON.stringify({...req.headers, 'x-api-key': '[Redacted]'}, null, 2)}`
-      else errorMessage += `\nHeaders:\n${JSON.stringify({...req.headers}, null, 2)}`
-      if(req.body && typeof req.body === 'object' && Object.keys(req.body).length !== 0) errorMessage += `\nRequest body:\n${JSON.stringify(req.body, null, 2)}`
+      if (req.headers && req.isAuthenticated) errorMessage += `\nHeaders:\n${JSON.stringify({ ...req.headers, 'x-api-key': '[Redacted]' }, null, 2)}`
+      else errorMessage += `\nHeaders:\n${JSON.stringify({ ...req.headers }, null, 2)}`
+      if (req.body && typeof req.body === 'object' && Object.keys(req.body).length !== 0) errorMessage += `\nRequest body:\n${JSON.stringify(req.body, null, 2)}`
       else errorMessage += '\nRequest body: empty'
     }
 
