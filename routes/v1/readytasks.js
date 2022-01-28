@@ -69,16 +69,19 @@ router.get('/', async (req, res, next) => {
         const taskCopy = { jobId: job._id, jobStatus: job.status, ...task }
 
         // Make a merged object with collectedData and task data
-        const data = (task.dataMapping || Array.isArray(task.dataMapping)) ? getTaskData(task.dataMapping, collectedData, taskCopy.data) : task.data
+        let data = task.data;
+        if (task.data && typeof data === 'object' && task.dataMapping) {
+          data = getTaskData(task.dataMapping, collectedData, taskCopy.data);
+        }
 
         // Create an request object for the orchestrator to use, this is only for QOL as we do not need to build this in the LogicApp
         const orchestratorRequest = {
           e18: {
             jobId: job._id,
             taskId: task._id
-          },
-          ...data
+          }
         }
+        if (data) orchestratorRequest.data = data;
 
         // Add to the readyTasks array
         readyTasks.push({

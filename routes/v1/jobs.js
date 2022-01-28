@@ -188,7 +188,7 @@ router.post('/:id/tasks/:taskid/operations', async (req, res, next) => {
         job.status = 'failed';
         job.tasks[taskIndex].status = 'failed'
         if (job.tasks[taskIndex].operations?.length) job.tasks[taskIndex].retries = job.tasks[taskIndex].operations.length;
-        if(job.tasks[taskIndex].retries > 0) job.retries += 1;
+        if (job.tasks[taskIndex].retries > 0) job.retries += 1;
         break
     }
 
