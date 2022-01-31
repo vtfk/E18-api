@@ -75,13 +75,13 @@ router.get('/', async (req, res, next) => {
         }
 
         // Create an request object for the orchestrator to use, this is only for QOL as we do not need to build this in the LogicApp
-        const orchestratorRequest = {
+        let orchestratorRequest = {
           e18: {
             jobId: job._id,
             taskId: task._id
           }
         }
-        if (data) orchestratorRequest.data = data;
+        if (data) orchestratorRequest = { ...orchestratorRequest, ...data }
 
         // Add to the readyTasks array
         readyTasks.push({
