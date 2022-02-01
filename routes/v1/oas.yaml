@@ -597,9 +597,14 @@ components:
           type: boolean
           description: Should the job be processed
           default: true
+        delayUntil:
+          $ref: '#/components/schemas/DateTime'
         regarding:
           type: string
           description: What this job regards. Shall not contain personal information
+        contact:
+          type: string
+          description: Contact information regarding this job, will be deleted when moved to statistics
         comment:
           type: string
           description: A comment on the task, intended for commenting from the frontend
@@ -655,6 +660,8 @@ components:
         regarding:
           type: string
           description: What does this task regard?
+        delayUntil:
+          $ref: '#/components/schemas/DateTime'
         tags:
           type: array
           items:

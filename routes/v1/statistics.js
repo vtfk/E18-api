@@ -41,7 +41,7 @@ router.post('/maintain', async (req, res, next) => {
 
       // Make a copy of the job and strip
       let copy = JSON.parse(JSON.stringify(job))
-      copy = vtfkutils.removeKeys(copy, ['data', 'error'])
+      copy = vtfkutils.removeKeys(copy, ['data', 'error', 'contact']);
 
       // Remove files
       if (copy.e18 === true) {

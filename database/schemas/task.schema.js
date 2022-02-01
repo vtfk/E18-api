@@ -31,6 +31,7 @@ const schema = new mongoose.Schema({
   system: { type: String },
   method: { type: String },
   status: { type: String, enum: commonValues.statuses, default: 'waiting' },
+  delayUntil: { type: Date },
   retries: { type: Number, default: 0 },
   data: { type: Object },
   dataMapping: { type: mongoose.Schema.Types.Mixed },

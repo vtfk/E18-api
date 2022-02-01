@@ -41,28 +41,39 @@ router.get('/', async (req, res, next) => {
     // Determine if the tasks in the job matches the criteria to be checked out
     for (const job of jobs) {
       let collectedData = {}
+      // If the job don't have any tasks.
       if (!job.tasks) continue
+      // If the delayUntil timestamp has not yet been passed
+      if (job.delayUntil && Date.parse(job.delayUntil) < Date.now()) continue;
+      // Loop through all task to determine who are ready for execution
       let taskIndex = -1;
       for (const task of job.tasks) {
         taskIndex++;
+
+        /*
+          Determine if the task should be skipped
+        */
         if (task.status === 'completed') {
+          // If the task has already completed, retreive it's data and carry on
           const completedOperation = task.operations.find((o) => o.status === 'completed');
           if (completedOperation?.data && typeof completedOperation.data === 'object') collectedData = merge(collectedData, completedOperation?.data)
           continue;
         } else if (task.status === 'running') {
+          // If the task is already running
           continue
         } else if (!job.parallel && taskIndex !== 0 && job.tasks[taskIndex - 1].status !== 'completed') {
+          // If the job is not parallell an the previous task has not been completed yet
           continue
         } else if (task.operations.filter((o) => o.status === 'failed').length >= 3) {
+          // If the task has previously failed 3 or more times
           continue;
-        }
-
-        // If parallel execution, check if there are uncompleted dependencies
-        if (job.parallel) {
-          if (task.dependencies && Array.isArray(task.dependencies) && task.dependencies.length > 0) {
-            const incompleteDependencies = job.tasks.filter((t) => task.dependencies.includes(t.dependencyTag) && t.status !== 'completed')
-            if (incompleteDependencies.length > 0) continue
-          }
+        } else if (task.delayUntil && Date.parse(task.delayUntil) < Date.now()) {
+          // If the delayUntil has not been reached yet
+          continue;
+        } else if (job.parallel && task.dependencies && Array.isArray(task.dependencies) && task.dependencies.length > 0) {
+          // If parallel execution, check if there are uncompleted dependencies
+          const incompleteDependencies = job.tasks.filter((t) => task.dependencies.includes(t.dependencyTag) && t.status !== 'completed')
+          if (incompleteDependencies.length > 0) continue
         }
 
         // Make a copy of the task and include jobId
