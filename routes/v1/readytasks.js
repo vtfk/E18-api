@@ -44,7 +44,7 @@ router.get('/', async (req, res, next) => {
       // If the job don't have any tasks.
       if (!job.tasks) continue
       // If the delayUntil timestamp has not yet been passed
-      if (job.delayUntil && Date.parse(job.delayUntil) < Date.now()) continue;
+      if (job.delayUntil && Date.parse(job.delayUntil) > Date.now()) continue;
       // Loop through all task to determine who are ready for execution
       let taskIndex = -1;
       for (const task of job.tasks) {
@@ -67,7 +67,7 @@ router.get('/', async (req, res, next) => {
         } else if (task.operations.filter((o) => o.status === 'failed').length >= 3) {
           // If the task has previously failed 3 or more times
           continue;
-        } else if (task.delayUntil && Date.parse(task.delayUntil) < Date.now()) {
+        } else if (task.delayUntil && Date.parse(task.delayUntil) > Date.now()) {
           // If the delayUntil has not been reached yet
           continue;
         } else if (job.parallel && task.dependencies && Array.isArray(task.dependencies) && task.dependencies.length > 0) {
