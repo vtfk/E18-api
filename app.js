@@ -205,8 +205,6 @@ app.use((err, req, res, next) => {
       errorMessage += `\nRequested endpoint: ${req.originalUrl}`
       if (req.headers && req.isAuthenticated) errorMessage += `\nHeaders:\n${JSON.stringify({ ...req.headers, 'x-api-key': '[Redacted]' }, null, 2)}`
       else errorMessage += `\nHeaders:\n${JSON.stringify({ ...req.headers }, null, 2)}`
-      if (req.body && typeof req.body === 'object' && Object.keys(req.body).length !== 0) errorMessage += `\nRequest body:\n${JSON.stringify(req.body, null, 2)}`
-      else errorMessage += '\nRequest body: empty'
     }
 
     try {
