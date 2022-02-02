@@ -80,7 +80,7 @@ router.get('/', async (req, res, next) => {
         const taskCopy = { jobId: job._id, jobStatus: job.status, ...task }
 
         // Make a merged object with collectedData and task data
-        if (task.data && typeof data === 'object' && task.dataMapping) {
+        if (task.data && typeof task.data === 'object' && task.dataMapping) {
           taskCopy.data = getTaskData(task.dataMapping, collectedData, task.data);
         }
 
