@@ -205,6 +205,10 @@ app.use((err, req, res, next) => {
       errorMessage += `\nRequested endpoint: ${req.originalUrl}`
       if (req.headers && req.isAuthenticated) errorMessage += `\nHeaders:\n${JSON.stringify({ ...req.headers, 'x-api-key': '[Redacted]' }, null, 2)}`
       else errorMessage += `\nHeaders:\n${JSON.stringify({ ...req.headers }, null, 2)}`
+      if (req.body?.system) { errorMessage += `\nSystem: ${req.body.system}` }
+      if (req.body?.type) { errorMessage += `\nType: ${req.body.type}` }
+      if (req.body && Object.getOwnPropertyNames(req.body).includes('projectId')) { errorMessage += `\nProjectId: ${req.body.projectId}` }
+      if (req.body && Object.getOwnPropertyNames(req.body).includes('e18')) { errorMessage += `\nE18: ${req.body.e18}` }
     }
 
     try {
