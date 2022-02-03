@@ -385,7 +385,85 @@ describe('Test job life-cycles', () => {
   })
 
   describe('Testing jobs with data mapping', () => {
-    // TODO: Må implementeres
+    const job = {
+      system: 'e18',
+      type: 'test',
+      projectId: 0,
+      tasks: [
+        {
+          system: 'e18',
+          method: 'test'
+        },
+        {
+          system: 'e18',
+          method: '1:1 mapping',
+          dataMapping: ['test1=test1', 'levelone.leveltwo.levelthree=level1.level2.level3']
+        },
+        {
+          system: 'e18',
+          method: 'template mapping',
+          dataMapping: '{"test":{"test1":"{{test1}}","test2":"{{test2}}"}}'
+        },
+        {
+          system: 'e18',
+          method: 'full mapping',
+          dataMapping: '*'
+        }
+      ]
+    }
+
+    test('Post job', async () => {
+      const response = await request(app).post('/api/v1/jobs').set(headers).send(job)
+      expect(response.status).toBe(200);
+    })
+
+    test('Checkout and post operation with test-data to first task', async () => {
+      const response = await request(app).get('/api/v1/readyTasks?checkout=true').set(headers).send();
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(1);
+      const data = {
+        test1: 'test1',
+        level1: {
+          level2: {
+            level3: 'leveltest'
+          }
+        }
+      }
+      const res = await request(app).post(`/api/v1/jobs/${response.body[0].jobId}/tasks/${response.body[0]._id}/operations`).set(headers).send({ status: 'completed', data: data });
+      expect(res.status).toBe(200);
+    })
+
+    test('Checkout next task, test 1:1 datamapping and post operation with more data', async () => {
+      const response = await request(app).get('/api/v1/readyTasks?checkout=true').set(headers).send();
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(1);
+      expect(response.body[0].data.test1).toBe('test1');
+      expect(response.body[0].data.levelone.leveltwo.levelthree).toBe('leveltest');
+      const res = await request(app).post(`/api/v1/jobs/${response.body[0].jobId}/tasks/${response.body[0]._id}/operations`).set(headers).send({ status: 'completed', data: { test2: 'test2' } });
+      expect(res.status).toBe(200);
+    })
+
+    test('Checkout next task, test template datamapping and post operation with more data', async () => {
+      const response = await request(app).get('/api/v1/readyTasks?checkout=true').set(headers).send();
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(1);
+      expect(response.body[0].data.test.test1).toBe('test1');
+      expect(response.body[0].data.test.test2).toBe('test2');
+      const res = await request(app).post(`/api/v1/jobs/${response.body[0].jobId}/tasks/${response.body[0]._id}/operations`).set(headers).send({ status: 'completed', data: { test3: 'test3' } });
+      expect(res.status).toBe(200);
+    })
+
+    test('Checkout last task, test wildcard datamapping and post operation', async () => {
+      const response = await request(app).get('/api/v1/readyTasks?checkout=true').set(headers).send();
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(1);
+      expect(response.body[0].data.test1).toBe('test1');
+      expect(response.body[0].data.test2).toBe('test2');
+      expect(response.body[0].data.test3).toBe('test3');
+      expect(response.body[0].data.level1.level2.level3).toBe('leveltest');
+      const res = await request(app).post(`/api/v1/jobs/${response.body[0].jobId}/tasks/${response.body[0]._id}/operations`).set(headers).send({ status: 'completed' });
+      expect(res.status).toBe(200);
+    })
   })
 })
 

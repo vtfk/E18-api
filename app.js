@@ -33,7 +33,9 @@ logConfig({
 */
 const app = express() // Creates the express instance
 app.use(express.json({ limit: `${config.E18_REQUEST_LIMIT_MB}mb` })) // Automatically parse JSON body
-app.use(morgan('dev')) // Output request information to stdout
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan('dev')) // Output request information to stdout
+}
 
 // Handle CORS
 const corsOptions = {
