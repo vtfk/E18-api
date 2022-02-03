@@ -24,9 +24,7 @@ router.get('/', async (req, res, next) => {
       ],
       e18: true
     }
-    if (req.query.type) {
-      query['tasks.type'] = req.query.type
-    }
+    if (req.query.type) query['tasks.type'] = req.query.type
 
     // Retreive the jobs
     const rawJobs = await Job.find(query).lean()
@@ -39,12 +37,15 @@ router.get('/', async (req, res, next) => {
     }
 
     // Determine if the tasks in the job matches the criteria to be checked out
+    const taskGroupShield = Math.floor(Math.random() * 10000000000); // This has to be something unique, it makes it easier to logically check the group names
+    let currentTaskGroup = taskGroupShield;
     for (const job of jobs) {
       let collectedData = {}
       // If the job don't have any tasks.
       if (!job.tasks) continue
       // If the delayUntil timestamp has not yet been passed
       if (job.delayUntil && Date.parse(job.delayUntil) > Date.now()) continue;
+
       // Loop through all task to determine who are ready for execution
       let taskIndex = -1;
       for (const task of job.tasks) {
@@ -61,27 +62,30 @@ router.get('/', async (req, res, next) => {
         } else if (task.status === 'running') {
           // If the task is already running
           continue
-        } else if (!job.parallel && taskIndex !== 0 && job.tasks[taskIndex - 1].status !== 'completed') {
-          // If the job is not parallell an the previous task has not been completed yet
-          continue
         } else if (task.operations.filter((o) => o.status === 'failed').length >= 3) {
           // If the task has previously failed 3 or more times
           continue;
         } else if (task.delayUntil && Date.parse(task.delayUntil) > Date.now()) {
           // If the delayUntil has not been reached yet
           continue;
-        } else if (job.parallel && task.dependencies && Array.isArray(task.dependencies) && task.dependencies.length > 0) {
-          // If parallel execution, check if there are uncompleted dependencies
-          const incompleteDependencies = job.tasks.filter((t) => task.dependencies.includes(t.dependencyTag) && t.status !== 'completed')
-          if (incompleteDependencies.length > 0) continue
+        } else if (!job.parallel) {
+          // Check if every task before this one is completed
+          let allPrecedingTasksCompleted = true;
+          for (let i = 0; i < taskIndex; i++) {
+            if (!job.tasks[i].operations || !Array.isArray(job.tasks[i].operations)) allPrecedingTasksCompleted = false;
+            if (!job.tasks[i].operations.find((o) => o.status === 'completed')) allPrecedingTasksCompleted = false;
+          }
+          // If the job is not parallell AND the task is not in the current taskGroup AND the previous task has not completed yet
+          if (task.group !== currentTaskGroup && !allPrecedingTasksCompleted) continue
         }
+
+        // Set what the current task group is
+        currentTaskGroup = task.group || taskGroupShield;
 
         // Make a copy of the task and include jobId
         const taskCopy = { jobId: job._id, jobStatus: job.status, ...task }
-        console.log('collectedData', collectedData);
         // Make a merged object with collectedData and task data
         if (task.data && typeof task.data === 'object' && task.dataMapping) {
-          console.log('Should be mapped');
           taskCopy.data = getTaskData(task.dataMapping, collectedData, task.data);
         }
 
@@ -96,7 +100,7 @@ router.get('/', async (req, res, next) => {
       const taskIds = readyTasks.map((t) => t._id.toString());
       // Update that status of the job and tasks to running
       await Job.updateMany({ 'tasks._id': { $in: taskIds } }, { $set: { status: 'running', 'tasks.$.status': 'running' } }, { new: true });
-      // Also update readyTasks, just to be consistent
+      // Also update readyTasks, just to be consistent with what is written to the database
       readyTasks.forEach((t) => { t.status = 'running'; t.jobStatus = 'running' });
     }
 

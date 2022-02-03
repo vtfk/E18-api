@@ -655,6 +655,10 @@ components:
         method:
           type: string
           description: The method to run for the system
+        group:
+          type: string
+          description: 'Tasks in the same group will be run in parallell'
+          minLength: 1
         status:
           $ref: '#/components/schemas/Statuses'
         regarding:
@@ -687,15 +691,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/File'
-        dependencyTag:
-          type: string
-          description: A tag that other tasks can be dependent upon
-        dependencies:
-          type: array
-          description: A array of tags this task is dependent on
-          minItems: 1
-          items:
-            type: string
         dataMapping:
           oneOf:
             - type: array

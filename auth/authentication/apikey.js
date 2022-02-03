@@ -13,7 +13,6 @@ module.exports = new HeaderAPIKeyStrategy(
   async (apikey, done) => {
     // If development or test, just return OK.
     if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
-      console.log(`✅ Successfully authenticated due to beeing in "${process.env.NODE_ENV}" mode`);
       return done(null, 'ok');
     };
 
