@@ -657,7 +657,7 @@ components:
           description: The method to run for the system
         group:
           type: string
-          description: 'Tasks in the same group will be run in parallell'
+          description: 'Tasks in the same group will be run in parallel'
           minLength: 1
         status:
           $ref: '#/components/schemas/Statuses'

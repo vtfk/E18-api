@@ -46,14 +46,14 @@
 }
 ```
 
-## Register job with tasks that can run in parallell
+## Register job with tasks that can run in parallel
 **`POST /jobs`**
 ```json
 {
   "system": "<unique-identifier-for-your-system>",
   "type": "<unique-identifier-for-this-operation>",
   "projectId": 0,
-  "parallell": true, // If set to true all tasks will run in parallell if dependency information is provided
+  "parallel": true, // If set to true all tasks will run in parallel if dependency information is provided
   "tasks": [
     {
       "system": "<which-system/api-has-been-used>",

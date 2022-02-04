@@ -75,7 +75,7 @@ router.get('/', async (req, res, next) => {
             if (!job.tasks[i].operations || !Array.isArray(job.tasks[i].operations)) allPrecedingTasksCompleted = false;
             if (!job.tasks[i].operations.find((o) => o.status === 'completed')) allPrecedingTasksCompleted = false;
           }
-          // If the job is not parallell AND the task is not in the current taskGroup AND the previous task has not completed yet
+          // If the job is not parallel AND the task is not in the current taskGroup AND the previous task has not completed yet
           if (task.group !== currentTaskGroup && !allPrecedingTasksCompleted) continue
         }
 
