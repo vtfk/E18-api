@@ -31,6 +31,7 @@ const schema = new mongoose.Schema({
   system: { type: String },
   method: { type: String },
   status: { type: String, enum: commonValues.statuses, default: 'waiting' },
+  group: { type: String },
   delayUntil: { type: Date },
   retries: { type: Number, default: 0 },
   data: { type: Object },
@@ -43,8 +44,6 @@ const schema = new mongoose.Schema({
   regarding: { type: String },
   comment: { type: String },
   tags: { type: [String] },
-  dependencyTag: { type: String },
-  dependencies: { type: [String] },
   operations: { type: [operation] },
   createdTimestamp: { type: Date, default: new Date() },
   modifiedTimestamp: { type: Date }

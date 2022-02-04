@@ -46,16 +46,13 @@ router.post('/maintain', async (req, res, next) => {
       // Remove files
       if (copy.e18 === true) {
         // Get any tasks with files
-        const tasksWithFiles = copy.tasks.filter(task => Array.isArray(task.files) && task.files.length);
+        const tasksWithFiles = copy.tasks.filter(task => Array.isArray(task.files) && task.files.length > 0);
 
         // Remove the files and replace then with a filecount instead
-        for (const task of tasksWithFiles) {
-          delete task.files;
-        }
+        for (const task of tasksWithFiles) delete task.files;
 
-        if (tasksWithFiles) {
-          await remove(copy._id);
-        }
+        // Delete the blob folder
+        if (tasksWithFiles.length > 0) await remove(copy._id);
       }
 
       // Create statistics entry

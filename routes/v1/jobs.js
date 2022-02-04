@@ -187,9 +187,13 @@ router.post('/:id/tasks/:taskid/operations', async (req, res, next) => {
       case 'failed':
         job.status = 'failed';
         job.tasks[taskIndex].status = 'failed'
-        if (job.tasks[taskIndex].operations?.length) job.tasks[taskIndex].retries = job.tasks[taskIndex].operations.length;
-        if (job.tasks[taskIndex].retries > 0) job.retries += 1;
         break
+    }
+
+    // If the task has previously failed, increment the retries counter by one;
+    if (job.tasks[taskIndex].operations.filter((o) => o.status === 'failed').length > 0) {
+      job.tasks[taskIndex].retries += 1;
+      job.retries += 1;
     }
 
     // Push the operation
