@@ -9,18 +9,15 @@ const HTTPError = require('../../lib/vtfk-errors/httperror');
  * @returns
  */
 function validate (job) {
-  // Common validation
-
-
   // Checks if E18 is true
   if (job.e18 !== false) {
-    if (!job.system) throw new HTTPError(400, 'system cannot be empty');
-    // if (!job.type) throw new HTTPError(400, 'type must cannot be empty');
-    if (job.projectId === undefined || job.projectId === null) throw new HTTPError(400, 'projectId cannot be empty when e18 is true');
+    if (!job.system) throw new HTTPError(400, 'Job system cannot be empty');
+    if (!job.type) throw new HTTPError(400, 'Job type cannot be empty');
+    if (job.projectId === undefined || job.projectId === null) throw new HTTPError(400, 'Job projectId cannot be empty when e18 is true');
 
     // Valiadte tasks
-    if (!job.tasks) throw new HTTPError(400, 'tasks cannot be empty when e18 is true');
-    if (!Array.isArray(job.tasks) || job.tasks.length === 0) throw new HTTPError(400, 'tasks cannot be empty when e18 is true');
+    if (!job.tasks) throw new HTTPError(400, 'Job tasks cannot be empty when e18 is true');
+    if (!Array.isArray(job.tasks) || job.tasks.length === 0) throw new HTTPError(400, 'Job tasks cannot be empty when e18 is true');
     let taskIndex = -1;
     job.tasks.forEach((task) => {
       taskIndex++;
@@ -41,9 +38,12 @@ function validate (job) {
         })
       }
     })
-  } else { // If E18 is explicitly set false
-    // Set some default values
-    job.parallel = false;
+  } else {
+    // If E18 is explicitly set false
+    job.system = job.system || 'unknown' // If no system has been provided
+    job.type = job.type || 'unknown' // If no type has been provided
+    job.projectId = job.projectId || 0; // If no projectId has been provided, set it to 0
+
     // Remove any unesessary/unsupported information from the task
     if (job.tasks) {
       job.tasks.forEach((task) => {

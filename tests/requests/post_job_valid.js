@@ -3,6 +3,7 @@ module.exports = [
     description: 'Regular E18 job',
     data: {
       system: 'E18',
+      type: 'test',
       projectId: 0,
       tasks: [
         {
@@ -19,6 +20,7 @@ module.exports = [
     description: 'Self execution job',
     data: {
       system: 'E18',
+      type: 'test',
       projectId: 0,
       e18: false,
       tasks: [
@@ -36,6 +38,7 @@ module.exports = [
     description: 'Second task has the first one as dependency',
     data: {
       system: 'E18',
+      type: 'test',
       projectId: 0,
       tasks: [
         {
@@ -61,6 +64,7 @@ module.exports = [
     description: 'Job has task with datamapping JSON',
     data: {
       system: 'E18',
+      type: 'test',
       projectId: 0,
       tasks: [
         {
@@ -75,6 +79,7 @@ module.exports = [
     description: 'Job has task with datamapping JSON in array',
     data: {
       system: 'E18',
+      type: 'test',
       projectId: 0,
       tasks: [
         {
@@ -92,6 +97,7 @@ module.exports = [
     description: 'Job with task containing array data',
     data: {
       system: 'E18',
+      type: 'test',
       projectId: 0,
       tasks: [
         {
@@ -106,6 +112,7 @@ module.exports = [
     description: 'Job with task containing string data',
     data: {
       system: 'E18',
+      type: 'test',
       projectId: 0,
       tasks: [
         {
@@ -120,6 +127,7 @@ module.exports = [
     description: 'Job with task containing number data',
     data: {
       system: 'E18',
+      type: 'test',
       projectId: 0,
       tasks: [
         {
@@ -134,6 +142,7 @@ module.exports = [
     description: 'Job with task containing bool data',
     data: {
       system: 'E18',
+      type: 'test',
       projectId: 0,
       tasks: [
         {
