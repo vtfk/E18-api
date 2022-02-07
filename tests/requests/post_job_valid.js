@@ -19,9 +19,6 @@ module.exports = [
   {
     description: 'Self execution job',
     data: {
-      system: 'E18',
-      type: 'test',
-      projectId: 0,
       e18: false,
       tasks: [
         {
