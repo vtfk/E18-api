@@ -584,9 +584,11 @@ components:
           type: string
           description: The system this job originates from
           example: IDM
+          minLength: 1
         type:
           type: string
           description: The type of job this is for the sytem
+          minLength: 1
         status:
           $ref: '#/components/schemas/Statuses'
         projectId:
@@ -652,9 +654,11 @@ components:
           $ref: '#/components/schemas/MongoDBId'
         system:
           type: string
+          minLength: 1
         method:
           type: string
           description: The method to run for the system
+          minLength: 1
         group:
           type: string
           description: 'Tasks in the same group will be run in parallel'
