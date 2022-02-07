@@ -10,11 +10,12 @@ const HTTPError = require('../../lib/vtfk-errors/httperror');
  */
 function validate (job) {
   // Common validation
-  if (!job.system) throw new HTTPError(400, 'system cannot be empty');
-  // if (!job.type) throw new HTTPError(400, 'type must cannot be empty');
+
 
   // Checks if E18 is true
   if (job.e18 !== false) {
+    if (!job.system) throw new HTTPError(400, 'system cannot be empty');
+    // if (!job.type) throw new HTTPError(400, 'type must cannot be empty');
     if (job.projectId === undefined || job.projectId === null) throw new HTTPError(400, 'projectId cannot be empty when e18 is true');
 
     // Valiadte tasks
