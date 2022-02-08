@@ -710,7 +710,7 @@ components:
         operations:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/TaskOperationSuccess'
               - $ref: '#/components/schemas/TaskOperationFailed'
             discriminator:
