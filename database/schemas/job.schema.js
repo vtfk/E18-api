@@ -17,13 +17,22 @@ const schema = new mongoose.Schema({
   parallel: { type: Boolean, default: false },
   delayUntil: { type: Date },
   retries: { type: Number, default: 0 },
-  tasks: { type: [taskSchema], required: true },
+  tasks: { type: [taskSchema], required: true, default: [] },
   regarding: { type: String },
   contact: { type: String },
   comment: { type: String },
   tags: { type: [String] },
   createdTimestamp: { type: Date, default: new Date() },
   modifiedTimestamp: { type: Date, default: new Date() }
+})
+
+// needs to be set to allow for virtuals to be included
+schema.set('toObject', { virtuals: true })
+schema.set('toJSON', { virtuals: true })
+
+// add a virtual tasksCount property
+schema.virtual('taskCount').get(function () {
+  return this.tasks.length
 })
 
 /*
