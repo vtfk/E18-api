@@ -9,7 +9,7 @@ if (config.APPLICATIONINSIGHTS_CONNECTION_STRING) {
     appInsights.setup().setSendLiveMetrics(true).setAutoCollectConsole(true).start();
     console.log('✅ ApplicationInsights ready')
   } catch (err) {
-    console.error('❌ ApplicationInsights failed\n',err)
+    console.error('❌ ApplicationInsights failed\n', err)
   }
 }
 const fs = require('fs') // For working with the file system
@@ -110,7 +110,7 @@ app.use('*', (req, res, next) => {
     const userAgent = req.headers['user-agent']?.toLowerCase();
     if (userAgent && (userAgent.includes('alwayson') || userAgent.includes('healthcheck'))) return res.sendStatus(200);
   }
-  
+
   // Validate that the route is specified in the spec
   if (!req.openapi) {
     next(new HTTPError(404, `The route ${req.originalUrl} does not exist`))
