@@ -1,3 +1,5 @@
+// NOT IN USE - REMAIN JUST FOR TESTING PRUPOSES
+
 const { MongoClient } = require('mongodb')
 const config = require('../config')
 config.dbConnectionString
