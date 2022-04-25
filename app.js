@@ -2,6 +2,11 @@
   Import dependencies
 */
 const config = require('./config') // Loads the config
+if (config.APPLICATIONINSIGHTS_CONNECTION_STRING) {
+  const appInsights = require('applicationinsights')
+  console.log('Setting up application insights')
+  appInsights.setup().start();
+}
 const fs = require('fs') // For working with the file system
 const path = require('path') // For combining paths
 const yamljs = require('yamljs') // For converting YAML to JSON

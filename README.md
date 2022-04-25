@@ -238,3 +238,11 @@ AZURE_BLOB_CONNECTIONSTRING=get-connection-string-from-access-keys-on-your-stora
 AZURE_BLOB_CONTAINERNAME=files
 ```
 *If no 'DBCONNECTIONSTRING' is provided, the API will create a MongoMemoryServer instance on port 9000*
+
+## Environment variables
+| Variable | Description | Example |
+|---|---|---|
+|DBCONNECTIONSTRING|MongoDB connection string |
+|STORAGE_ACCOUNT_CONNECTIONSTRING|Connection string for Azure storage account |
+|STORAGE_ACCOUNT_BLOB_NAME|Name of the blob container
+|APPLICATIONINSIGHTS_CONNECTION_STRING|Connectionstring for Azure Application Insights (optional)
