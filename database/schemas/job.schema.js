@@ -26,15 +26,6 @@ const schema = new mongoose.Schema({
   modifiedTimestamp: { type: Date, default: new Date() }
 })
 
-// needs to be set to allow for virtuals to be included
-schema.set('toObject', { virtuals: true })
-schema.set('toJSON', { virtuals: true })
-
-// add a virtual tasksCount property
-schema.virtual('taskCount').get(function () {
-  return this.tasks.length
-})
-
 /*
   Export
 */
