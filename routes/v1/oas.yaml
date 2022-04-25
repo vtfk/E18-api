@@ -423,6 +423,32 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
+  /statistics/all:
+    get:
+      operationId: getAllStatistics
+      summary: Gets statistics without odata (faster)
+      tags:
+        - Statistics
+      security:
+        - APIKey: []
+        - Bearer: []
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
   /apikeys:
     get:
       operationId: getAPIKeys
