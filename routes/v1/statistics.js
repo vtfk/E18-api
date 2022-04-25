@@ -23,6 +23,17 @@ router.get('/', async (req, res, next) => {
   }
 })
 
+// GET All
+router.get('/all', async (req, res, next) => {
+  try {
+    const data = await Statistics.find();
+    res.body = data
+    next()
+  } catch (err) {
+    return next(err)
+  }
+})
+
 // Maintenance - Creates statistics and deletes completed jobs
 router.post('/maintain', async (req, res, next) => {
   try {
