@@ -70,7 +70,13 @@ router.post('/maintain', async (req, res, next) => {
       }
 
       // Create statistics entry
-      await Statistics.create(copy)
+      try {
+        await Statistics.create(copy)
+      } catch (err) {
+        if (!err || !err.message) throw err;
+        // If it is a duplicate key error, it is safe to proceed and delete the job from the queue
+        if (!err.message.includes('duplicate key error collection')) throw err;
+      }
 
       // Delete the job
       await Jobs.deleteOne({ _id: job._id })
