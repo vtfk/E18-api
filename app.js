@@ -5,7 +5,12 @@ const config = require('./config') // Loads the config
 if (config.APPLICATIONINSIGHTS_CONNECTION_STRING) {
   const appInsights = require('applicationinsights')
   console.log('Setting up application insights')
-  appInsights.setup().start();
+  try {
+    appInsights.setup().setSendLiveMetrics(true).setAutoCollectConsole(true).start();
+    console.log('✅ ApplicationInsights ready')
+  } catch (err) {
+    console.error('❌ ApplicationInsights failed\n',err)
+  }
 }
 const fs = require('fs') // For working with the file system
 const path = require('path') // For combining paths
@@ -100,12 +105,13 @@ if (routeChildren && Array.isArray(routeChildren)) {
   Validate that the route exists and that the database is connected
 */
 app.use('*', (req, res, next) => {
+  console.log('Checking routes')
   // Handle Azure healthCheck and alwaysOn requests
   if (req.headers) {
     const userAgent = req.headers['user-agent']?.toLowerCase();
     if (userAgent && (userAgent.includes('alwayson') || userAgent.includes('healthcheck'))) return res.sendStatus(200);
   }
-
+  
   // Validate that the route is specified in the spec
   if (!req.openapi) {
     next(new HTTPError(404, `The route ${req.originalUrl} does not exist`))
@@ -136,6 +142,7 @@ app.use(passport.initialize())
 app.all('*',
   passport.authenticate(['headerapikey'], { session: false }),
   (req, res, next) => {
+    console.log('Auth done')
     req.isAuthenticated = true;
     next();
   }
