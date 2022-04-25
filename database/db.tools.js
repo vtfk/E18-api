@@ -221,6 +221,7 @@ exports.requestDataByQuery = async (req, Model, FieldsToRemove = [], FieldsToPop
       .skip((query.pagination.$skip - 1) * query.pagination.$top)
       .sort(query.$orderby)
       .populate(populate)
+      .lean()
       .exec()
 
     // Convert data to JSON to enable editing before sending the reponse
