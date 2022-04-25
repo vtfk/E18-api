@@ -105,7 +105,6 @@ if (routeChildren && Array.isArray(routeChildren)) {
   Validate that the route exists and that the database is connected
 */
 app.use('*', (req, res, next) => {
-  console.log('Checking routes')
   // Handle Azure healthCheck and alwaysOn requests
   if (req.headers) {
     const userAgent = req.headers['user-agent']?.toLowerCase();
@@ -142,7 +141,6 @@ app.use(passport.initialize())
 app.all('*',
   passport.authenticate(['headerapikey'], { session: false }),
   (req, res, next) => {
-    console.log('Auth done')
     req.isAuthenticated = true;
     next();
   }

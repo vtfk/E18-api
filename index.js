@@ -22,9 +22,7 @@ async function outputServerEndpoints () {
     if (host === '0.0.0.0') { hostname = 'localhost' }
 
     // Output the root adress the server is listening on
-    console.log();
-    console.log();
-    console.log('Root endpoint:')
+    console.log('\n\nRoot endpoint:')
     console.log('Your server is listening on port %d (http://%s:%d)', port, hostname, port)
 
     // Output API endpoint documentation URLs
