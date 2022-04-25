@@ -423,10 +423,10 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
-  /statistics/all:
+  /statistics/lean:
     get:
-      operationId: getAllStatistics
-      summary: Gets statistics without odata (faster)
+      operationId: getLeanStatistics
+      summary: Get leaned statistics (faster)
       tags:
         - Statistics
       security:

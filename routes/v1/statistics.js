@@ -8,7 +8,6 @@ const Statistics = require('../../database/db').Statistic
 const Jobs = require('../../database/db').Job
 const vtfkutils = require('../../lib/vtfk-utilities/vtfk-utilities')
 const { remove } = require('@vtfk/azure-blob-client');
-const mongoConnect = require('../../database/mongo')
 
 /*
   Routes
@@ -24,22 +23,13 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-// GET All
-router.get('/all', async (req, res, next) => {
+// GET All items (leaned)
+router.get('/lean', async (req, res, next) => {
   try {
-    console.log('Find all statistics')
-    console.time('Statistics gathered')
-    const connection = await mongoConnect();
-    const data = await connection.find({}).toArray();
-    
-    // const data = await Statistics.find();
-
-
-
-
-
-    console.timeEnd('Statistics gathered')
-    console.log('Done')
+    const data = await Statistics
+      .find()
+      .select('-e18 -parallel -retries -modifiedTimestamp -tasks.retries -tasks.dependencies -tasks.operations -__v')
+      .lean();
     res.body = data
     next()
   } catch (err) {
