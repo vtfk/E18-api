@@ -246,3 +246,5 @@ AZURE_BLOB_CONTAINERNAME=files
 |STORAGE_ACCOUNT_CONNECTIONSTRING|Connection string for Azure storage account |
 |STORAGE_ACCOUNT_BLOB_NAME|Name of the blob container
 |APPLICATIONINSIGHTS_CONNECTION_STRING|Connectionstring for Azure Application Insights (optional)
+|RATELIMIT_WINDOW_MS|The number of milliseconds pr. rate limit frame | 60000
+|RATELIMIT_WINDOW_LIMIT|The number of requests pr. requester in the current limit window | 150
