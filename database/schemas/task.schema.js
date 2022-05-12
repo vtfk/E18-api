@@ -15,7 +15,8 @@ const operation = new mongoose.Schema({
   trackingId: { type: String },
   data: { type: mongoose.Schema.Types.Mixed },
   error: { type: mongoose.Schema.Types.Mixed }
-})
+},
+{ timestamps: true }) // let Mongoose automatically manage "createdAt" and "updatedAt" properties on the document
 
 const file = new mongoose.Schema({
   _id: false,
@@ -47,6 +48,7 @@ const schema = new mongoose.Schema({
   operations: { type: [operation] },
   createdTimestamp: { type: Date, default: new Date() },
   modifiedTimestamp: { type: Date }
-})
+},
+{ timestamps: true }) // let Mongoose automatically manage "createdAt" and "updatedAt" properties on the document
 
 module.exports = schema

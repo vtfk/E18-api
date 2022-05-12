@@ -24,7 +24,8 @@ const schema = new mongoose.Schema({
   tags: { type: [String] },
   createdTimestamp: { type: Date, default: new Date() },
   modifiedTimestamp: { type: Date, default: new Date() }
-})
+},
+{ timestamps: true }) // let Mongoose automatically manage "createdAt" and "updatedAt" properties on the document
 
 /*
   Export
