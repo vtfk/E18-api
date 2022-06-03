@@ -3,7 +3,7 @@
 */
 const mongoose = require('mongoose')
 const taskSchema = require('./task.schema')
-const { comment } = require('./common')
+const { comment, schemaTimestampsOption } = require('./common')
 const commonValues = require('../common')
 
 /*
@@ -26,7 +26,7 @@ const schema = new mongoose.Schema({
   createdTimestamp: { type: Date, default: new Date() },
   modifiedTimestamp: { type: Date, default: new Date() }
 },
-{ timestamps: true }) // let Mongoose automatically manage "createdAt" and "updatedAt" properties on the document
+{ ...schemaTimestampsOption })
 
 /*
   Export

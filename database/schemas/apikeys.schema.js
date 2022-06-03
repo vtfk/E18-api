@@ -2,6 +2,7 @@
   Import dependencies
 */
 const mongoose = require('mongoose')
+const { schemaTimestampsOption } = require('./common')
 
 /*
     Schema definition
@@ -13,7 +14,7 @@ const schema = new mongoose.Schema({
   createdTimeStamp: { type: Date, default: new Date().toISOString() },
   modifiedTimeStamp: { type: Date, default: new Date().toISOString() }
 },
-{ timestamps: true }) // let Mongoose automatically manage "createdAt" and "updatedAt" properties on the document
+{ ...schemaTimestampsOption })
 
 /*
   Export

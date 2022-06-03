@@ -4,7 +4,7 @@
 const mongoose = require('mongoose')
 const commonSchemaValues = require('./common')
 const commonValues = require('../common')
-const { comment } = commonSchemaValues
+const { comment, schemaTimestampsOption } = commonSchemaValues
 
 /*
   Sub schema
@@ -17,7 +17,7 @@ const operation = new mongoose.Schema({
   data: { type: mongoose.Schema.Types.Mixed },
   error: { type: mongoose.Schema.Types.Mixed }
 },
-{ timestamps: true }) // let Mongoose automatically manage "createdAt" and "updatedAt" properties on the document
+{ ...schemaTimestampsOption })
 
 const file = new mongoose.Schema({
   _id: false,
@@ -50,6 +50,6 @@ const schema = new mongoose.Schema({
   createdTimestamp: { type: Date, default: new Date() },
   modifiedTimestamp: { type: Date }
 },
-{ timestamps: true }) // let Mongoose automatically manage "createdAt" and "updatedAt" properties on the document
+{ ...schemaTimestampsOption })
 
 module.exports = schema

@@ -6,3 +6,9 @@ module.exports.comment = new mongoose.Schema({
   user: { type: String, required: true },
   message: { type: String, required: true }
 })
+module.exports.schemaTimestampsOption = {
+  timestamps: {
+    createdAt: 'createdTimeStamp',
+    updatedAt: 'modifiedTimeStamp'
+  }
+} // let Mongoose automatically manage "createdAt" and "updatedAt" properties on the document
