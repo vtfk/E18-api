@@ -90,7 +90,7 @@ router.put('/:id', async (req, res, next) => {
     const update = req.body
     if (comment) {
       delete update.comment
-      update['$push'] = { comments: comment }
+      update.$push = { comments: comment }
     }
     res.body = await Job.findByIdAndUpdate(req.params.id, update, { new: true });
     // Return
