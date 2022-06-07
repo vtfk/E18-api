@@ -37,7 +37,7 @@
       "system": "<which-system/api-has-been-used>",
       "method": "<which-endpoint-in-system/api-has-been-called",
       "regarding": "something",
-      "data": { "someData": "test" } // Optional: Object that will be sent to the task endpoint
+      "data": { "someData": "test" }, // Optional: Object that will be sent to the task endpoint
       "tags": [
         "hey there"
       ]
@@ -85,13 +85,13 @@
     {
       "system": "<which-system/api-has-been-used>",
       "method": "<which-endpoint-in-system/api-has-been-called",
-      "group:" "group1"
+      "group": "group1",
       "data": { "someData": "test" }
     },
     {
       "system": "<which-system/api-has-been-used>",
       "method": "<which-endpoint-in-system/api-has-been-called",
-      "group": "group1" // This task will run together with the above task
+      "group": "group1", // This task will run together with the above task
       "data": { "someData": "test" }
     }
   ]
