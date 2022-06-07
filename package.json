@@ -23,7 +23,7 @@
   "devDependencies": {
     "@types/jest": "27.0.3",
     "audit": "0.0.6",
-    "axios": "0.24.0",
+    "axios": "0.27.2",
     "cross-env": "7.0.3",
     "jest": "27.4.7",
     "mongodb-memory-server": "8.1.0",
