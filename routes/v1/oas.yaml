@@ -496,6 +496,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/APIKey'
+      parameters:
+        - $ref: "#/components/parameters/fullitem"
       responses:
         200:
           description: Ok
@@ -986,6 +988,13 @@ components:
         type: string
         minLength: 1
         maxLength: 100
+    fullitem:
+      in: query
+      name: fullitem
+      description: Return full item
+      schema:
+        type: boolean
+        default: false
   responses:
     400:
       description: 400 Error
