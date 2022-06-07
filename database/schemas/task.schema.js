@@ -4,6 +4,7 @@
 const mongoose = require('mongoose')
 const commonSchemaValues = require('./common')
 const commonValues = require('../common')
+const { comment, schemaTimestampsOption } = commonSchemaValues
 
 /*
   Sub schema
@@ -15,7 +16,8 @@ const operation = new mongoose.Schema({
   trackingId: { type: String },
   data: { type: mongoose.Schema.Types.Mixed },
   error: { type: mongoose.Schema.Types.Mixed }
-})
+},
+{ ...schemaTimestampsOption })
 
 const file = new mongoose.Schema({
   _id: false,
@@ -42,11 +44,12 @@ const schema = new mongoose.Schema({
     default: undefined
   },
   regarding: { type: String },
-  comment: { type: String },
+  comments: { type: [comment] },
   tags: { type: [String] },
   operations: { type: [operation] },
   createdTimestamp: { type: Date, default: new Date() },
   modifiedTimestamp: { type: Date }
-})
+},
+{ ...schemaTimestampsOption })
 
 module.exports = schema
