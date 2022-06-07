@@ -1,6 +1,16 @@
 # E18-api
 # Usage
 
+## Update openAPI specification in API Manager
+
+Microsoft uses it's own `servers` object in the specification. So to update the **openAPI** specification in APIM:
+- Copy all content from the *yaml* file
+- Open the **API** in APIM
+- Select the arrow down in **Frontend** and choose `OpenAPI editor (YAML)`
+- Paste in the new *yaml* replacing the old one
+- Remove the `servers` section
+- Click **Save**
+
 ## Add statistics from a system
 
 **`POST /jobs`**
@@ -125,6 +135,30 @@
   ]
 }
 ```
+
+## Register new API key
+**`POST /apikeys`**
+```json
+{
+  "name": "Key name"
+}
+```
+
+> Add `?fullitem=true` to the URL to retrieve the full item from db
+
+## Update API key
+
+### Enable / Disable
+**`PUT /apikeys/:id`**
+```json
+{
+  "name": "Key name", // required field
+  "enabled": true | false
+}
+```
+
+### Remove API key
+**`DELETE /apikeys/:id`**
 
 # Data mapping
 E18 has the capability to merge data from the task operations into subsequent tasks.\
