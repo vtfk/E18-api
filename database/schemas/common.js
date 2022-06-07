@@ -8,7 +8,7 @@ module.exports.comment = new mongoose.Schema({
 })
 module.exports.schemaTimestampsOption = {
   timestamps: {
-    createdAt: 'createdTimeStamp',
-    updatedAt: 'modifiedTimeStamp'
+    createdAt: 'createdTimestamp',
+    updatedAt: 'modifiedTimestamp'
   }
 } // let Mongoose automatically manage "createdAt" and "updatedAt" properties on the document
