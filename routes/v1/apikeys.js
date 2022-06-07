@@ -73,7 +73,11 @@ router.post('/', async (req, res, next) => {
 
     // Create and return the apikey
     if (req.query.fullitem) {
-      res.body = await ApiKeys.findOne({ name: APIKey.name})
+      const { _doc } = await ApiKeys.findOne({ name: APIKey.name})
+      res.body = {
+        ..._doc,
+        key: plainAPIKey
+      }
     } else {
       res.body = {
         name: req.body.name,
