@@ -22,9 +22,7 @@ const schema = new mongoose.Schema({
   regarding: { type: String },
   contact: { type: String },
   comments: { type: [comment] },
-  tags: { type: [String] },
-  createdTimestamp: { type: Date, default: new Date() },
-  modifiedTimestamp: { type: Date, default: new Date() }
+  tags: { type: [String] }
 },
 { ...schemaTimestampsOption })
 

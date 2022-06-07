@@ -11,4 +11,4 @@ module.exports.schemaTimestampsOption = {
     createdAt: 'createdTimestamp',
     updatedAt: 'modifiedTimestamp'
   }
-} // let Mongoose automatically manage "createdAt" and "updatedAt" properties on the document
+} // let Mongoose automatically manage timestamps properties on the document

@@ -33,8 +33,6 @@ router.post('/', async (req, res, next) => {
     // Validate and sanitize the job
     const job = validateJob(req.body);
     job._id = new ObjectID()
-    job.createdTimestamp = new Date();
-    job.modifiedTimestamp = new Date();
 
     // Move attachments to blob storage
     if (job.e18 === true) {

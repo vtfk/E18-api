@@ -12,7 +12,6 @@ const { comment, schemaTimestampsOption } = commonSchemaValues
 const operation = new mongoose.Schema({
   status: { type: String, enum: commonSchemaValues.operationStatuses, required: true },
   message: { type: String },
-  createdTimestamp: { type: Date, default: new Date() },
   trackingId: { type: String },
   data: { type: mongoose.Schema.Types.Mixed },
   error: { type: mongoose.Schema.Types.Mixed }
@@ -46,9 +45,7 @@ const schema = new mongoose.Schema({
   regarding: { type: String },
   comments: { type: [comment] },
   tags: { type: [String] },
-  operations: { type: [operation] },
-  createdTimestamp: { type: Date, default: new Date() },
-  modifiedTimestamp: { type: Date }
+  operations: { type: [operation] }
 },
 { ...schemaTimestampsOption })
 

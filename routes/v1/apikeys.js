@@ -66,9 +66,7 @@ router.post('/', async (req, res, next) => {
     const APIKey = {
       name: req.body.name,
       enabled: true,
-      hash: hash,
-      createdTimestamp: new Date(),
-      modifiedTimestamp: new Date()
+      hash: hash
     }
 
     await ApiKeys.create(APIKey);
