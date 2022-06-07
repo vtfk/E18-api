@@ -21,11 +21,11 @@
   },
   "homepage": "https://github.com/vtfk/E18-api#readme",
   "devDependencies": {
-    "@types/jest": "27.0.3",
+    "@types/jest": "27.5.2",
     "audit": "0.0.6",
     "axios": "0.27.2",
     "cross-env": "7.0.3",
-    "jest": "27.4.7",
+    "jest": "27.5.1",
     "mongodb-memory-server": "8.6.0",
     "morgan": "1.10.0",
     "nodemon": "2.0.16",
