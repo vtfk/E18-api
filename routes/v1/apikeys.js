@@ -99,6 +99,18 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
+// Update apikey by id
+router.put('/:id', async (req, res, next) => {
+  try {
+    // Update the job
+    res.body = await ApiKeys.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    // Return
+    next();
+  } catch (err) {
+    next(err);
+  }
+})
+
 // Delete apikey by id
 router.delete('/:id', async (req, res, next) => {
   try {
