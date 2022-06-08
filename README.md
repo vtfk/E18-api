@@ -1,4 +1,37 @@
 # E18-api
+E18 is a system for central async job queue, error handeling and statistics.<br>
+It is composed of the following components:
+* API (This project)
+* Database (MongoDB)
+* Orchestrator (Microsoft Azure Logic App)
+* [Web frontend](https://github.com/vtfk/e18-web)
+
+The philosophy behind E18 is that systems can fire and forget jobs to it and be certain that it either will run sucessfully or that any errors will be seen and delt with via the frontend.
+
+## E18 jobs
+An E18 job contain information about the system that requested it, the purpose for the job as well as some other optional metadata and configuration options, it also contains one or more tasks that should be run.<br>
+The specifics about the fields are documented in detail
+
+## How it works:
+The E18 API exposes an endpoint that let other systemes registers jobs on it.<br>
+The system creates a job-request with one or more tasks and sends it to E18 (fire and forget)
+
+E18 then does the following:
+1. The orchestrator runs periodically and checks for tasks that are ready to run<br>
+   Tasks will as default run sequentially, but they can be grouped to run in parallell
+1. It verifies that the tasks is for an approved third-party system
+1. The job is executed
+1. The result is logged back to the job entry
+
+### If a task fails
+1. The error is logged back to the task
+1. The orchestrator will attempt to re-run the task X times, before giving up
+1. Tasks that don't run succesfully will stay in the queue until delt with via the frontend
+
+### When all tasks are completed successfully
+1. When the last task for a job is sucessfull the job is set to completed
+1. When the orchestrator runs maintenance it will strip away any non-metadata and move the job for the queue to statistics
+
 # Usage
 
 ## Update openAPI specification in API Manager
