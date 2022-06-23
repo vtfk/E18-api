@@ -21,6 +21,8 @@ const cors = require('cors') // For handeling CORS
 const swaggerUi = require('swagger-ui-express') // For hosting and displaying the APIs documentation
 const OpenApiValidator = require('express-openapi-validator') // Validates all routes based on the requested resource
 const { determineDocumentationLinks } = require('./lib/oas') // Function for determining if there are any documentation links to provide in case of an error
+const helmet = require('helmet') // Applies some best practices to the response header, like stripping away x-powered-by
+const rateLimit = require('express-rate-limit') // Rate limiting
 
 /*
   Setup database connection
@@ -45,6 +47,36 @@ const app = express() // Creates the express instance
 app.use(express.json({ limit: `${config.E18_REQUEST_LIMIT_MB}mb` })) // Automatically parse JSON body
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('dev')) // Output request information to stdout
+}
+
+// Strips away x-powered and other best practices
+app.use(helmet());
+
+// Rate-limiting
+console.log('Config', config)
+if (config.RATELIMIT_WINDOW_MS && config.RATELIMIT_WINDOW_LIMIT) {
+  // Parse and make sure that the limiting is valid
+  const rateLimitWindowsMS = parseInt(config.RATELIMIT_WINDOW_MS);
+  const rateLimitWindowLimit = parseInt(config.RATELIMIT_WINDOW_LIMIT);
+
+  console.log(`
+  Setting up rate limiting:
+    Windows MS: ${rateLimitWindowsMS}
+    Limit per window: ${rateLimitWindowLimit}
+  `)
+
+  if (rateLimitWindowsMS && rateLimitWindowLimit) {
+    // Applies rate limiting
+    const limiter = rateLimit({
+      windowMs: rateLimitWindowsMS, // The number of milliseconds
+      max: rateLimitWindowLimit, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+      standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+      legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+      message: config.RATELIMIT_MESSAGE
+    })
+
+    app.use(limiter);
+  }
 }
 
 // Handle CORS
