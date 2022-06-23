@@ -33,8 +33,6 @@ router.post('/', async (req, res, next) => {
     // Validate and sanitize the job
     const job = validateJob(req.body);
     job._id = new ObjectID()
-    job.createdTimestamp = new Date();
-    job.modifiedTimestamp = new Date();
 
     // Move attachments to blob storage
     if (job.e18 === true) {
@@ -86,7 +84,13 @@ router.put('/:id', async (req, res, next) => {
     // Remove any invalid fields
     req.body = utils.removeKeys(req.body, ['createdDate', 'modifiedData', 'createdBy', 'modifiedBy']);
     // Update the job
-    req.body = await Job.findByIdAndUpdate(req.params.id, req.body);
+    const { comment } = req.body
+    const update = req.body
+    if (comment) {
+      delete update.comment
+      update.$push = { comments: comment }
+    }
+    res.body = await Job.findByIdAndUpdate(req.params.id, update, { new: true });
     // Return
     next();
   } catch (err) {

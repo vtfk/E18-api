@@ -66,17 +66,23 @@ router.post('/', async (req, res, next) => {
     const APIKey = {
       name: req.body.name,
       enabled: true,
-      hash: hash,
-      createdTimestamp: new Date(),
-      modifiedTimestamp: new Date()
+      hash: hash
     }
 
     await ApiKeys.create(APIKey);
 
     // Create and return the apikey
-    res.body = {
-      name: req.body.name,
-      key: plainAPIKey
+    if (req.query.fullitem) {
+      const { _doc } = await ApiKeys.findOne({ name: APIKey.name})
+      res.body = {
+        ..._doc,
+        key: plainAPIKey
+      }
+    } else {
+      res.body = {
+        name: req.body.name,
+        key: plainAPIKey
+      }
     }
 
     return next();
@@ -96,6 +102,18 @@ router.get('/:id', async (req, res, next) => {
     next()
   } catch (err) {
     return next(err)
+  }
+})
+
+// Update apikey by id
+router.put('/:id', async (req, res, next) => {
+  try {
+    // Update the job
+    res.body = await ApiKeys.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    // Return
+    next();
+  } catch (err) {
+    next(err);
   }
 })
 

@@ -3,6 +3,7 @@
 */
 const mongoose = require('mongoose')
 const taskSchema = require('./task.schema')
+const { comment, schemaTimestampsOption } = require('./common')
 const commonValues = require('../common')
 
 /*
@@ -20,11 +21,10 @@ const schema = new mongoose.Schema({
   tasks: { type: [taskSchema], required: true, default: [] },
   regarding: { type: String },
   contact: { type: String },
-  comment: { type: String },
-  tags: { type: [String] },
-  createdTimestamp: { type: Date, default: new Date() },
-  modifiedTimestamp: { type: Date, default: new Date() }
-})
+  comments: { type: [comment] },
+  tags: { type: [String] }
+},
+{ ...schemaTimestampsOption })
 
 /*
   Export

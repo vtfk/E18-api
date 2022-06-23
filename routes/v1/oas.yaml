@@ -496,6 +496,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/APIKey'
+      parameters:
+        - $ref: "#/components/parameters/fullitem"
       responses:
         200:
           description: Ok
@@ -633,9 +635,11 @@ components:
         contact:
           type: string
           description: Contact information regarding this job, will be deleted when moved to statistics
-        comment:
-          type: string
-          description: A comment on the task, intended for commenting from the frontend
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+          description: Comments on the job, intended for commenting from the frontend
         tags:
           type: array
           items:
@@ -700,9 +704,11 @@ components:
           type: array
           items:
             type: string
-        comment:
-          type: string
-          description: A comment on the task, intended for commenting from the frontend
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+          description: Comments on the task, intended for commenting from the frontend
         retries:
           type: number
           description: The number of retries of this task
@@ -838,6 +844,14 @@ components:
       minLength: 24
       maxLength: 24
       example: 5f208a75f8a0ed560c5ab303
+    Comment:
+      type: object
+      description: The comment object
+      properties:
+        user:
+          type: string
+        message:
+          type: string
     Requestor:
       type: object
       description: This can either be a user or a APIKey
@@ -974,6 +988,13 @@ components:
         type: string
         minLength: 1
         maxLength: 100
+    fullitem:
+      in: query
+      name: fullitem
+      description: Return full item
+      schema:
+        type: boolean
+        default: false
   responses:
     400:
       description: 400 Error
