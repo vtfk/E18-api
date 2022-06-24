@@ -28,7 +28,7 @@
     "jest": "27.5.1",
     "mongodb-memory-server": "8.6.1",
     "morgan": "1.10.0",
-    "nodemon": "2.0.16",
+    "nodemon": "2.0.18",
     "standardx": "7.0.0",
     "supertest": "6.2.3"
   },
