@@ -23,13 +23,22 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-// GET All items (leaned)
+// GET All items but a lot of information not relevant for reporting is trimmed away to performance and size concerns
 router.get('/lean', async (req, res, next) => {
   try {
+    // Define the query filter
+    const filter = {
+      $and: [
+        { projectId: { $ne: 0 } }
+      ]
+    }
+    // Make the request
     const data = await Statistics
-      .find()
+      .find(filter)
       .select('-e18 -parallel -retries -modifiedTimestamp -tasks.retries -tasks.dependencies -tasks.operations -__v')
       .lean();
+
+    // Return the data
     res.body = data
     next()
   } catch (err) {

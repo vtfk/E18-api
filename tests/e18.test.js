@@ -210,13 +210,19 @@ describe('Test job life-cycles', () => {
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(1);
     })
+
+    test('The lean statistics endpoint should not return any items because projectId is 0', async () => {
+      const response = await request(app).get('/api/v1/statistics/lean').set(headers).send();
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(0);
+    })
   })
 
   describe('Test a parallel job with three tasks', () => {
     const job = {
       system: 'e18',
       type: 'test',
-      projectId: 0,
+      projectId: 1,
       parallel: true,
       tasks: [
         {
@@ -268,6 +274,18 @@ describe('Test job life-cycles', () => {
       const response = await request(app).get('/api/v1/readyTasks?checkout=true').set(headers).send(job);
       expect(response.status).toBe(200);
       expect(response.body.length).toBe(0);
+    })
+
+    test('Run maintenance', async () => {
+      const response = await request(app).post('/api/v1/statistics/maintain').set(headers).send();
+      expect(response.status).toBe(200);
+      expect(response.body.transferedEntries).toBe(1);
+    })
+
+    test('The lean statistics endpoint should return 1 item', async () => {
+      const response = await request(app).get('/api/v1/statistics/lean').set(headers).send();
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(1);
     })
   })
 
