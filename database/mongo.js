@@ -11,22 +11,11 @@ module.exports = () => {
   }
 
   console.log(`Getting data from '${config.dbConnectionString}'`)
-  if (client && !client.isConnected) {
-    client = null
-    console.warn('get-mongo', 'mongo connection lost', 'client discarded')
+  if (client !== null) {
+    return client.db('E18').collection('statistics')
   }
 
-  if (client === null) {
-    client = new MongoClient(config.dbConnectionString, { useNewUrlParser: true, useUnifiedTopology: true })
-  } else if (client.isConnected) {
-    try {
-      return new Promise(resolve => resolve(client.db('E18').collection('statistics')))
-    } catch (error) {
-      console.error('get-mongo', 'client was connected but failed', 'new client created', error)
-      client = new MongoClient(config.dbConnectionString, { useNewUrlParser: true, useUnifiedTopology: true })
-    }
-  }
-
+  client = new MongoClient(config.dbConnectionString)
   return new Promise((resolve, reject) => {
     client.connect(error => {
       if (error) {
