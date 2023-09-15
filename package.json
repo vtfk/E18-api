@@ -52,7 +52,7 @@
     "passport-headerapikey": "^1.2.2",
     "sjablong": "^1.0.33",
     "swagger-ui-express": "^4.3.0",
-    "uuid": "8.3.2",
+    "uuid": "9.0.1",
     "yamljs": "^0.3.0"
   },
   "standardx": {
