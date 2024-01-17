@@ -30,7 +30,7 @@
     "morgan": "1.10.0",
     "nodemon": "2.0.20",
     "standardx": "7.0.0",
-    "supertest": "6.2.4"
+    "supertest": "6.3.4"
   },
   "dependencies": {
     "@vtfk/azure-blob-client": "^0.1.0",
